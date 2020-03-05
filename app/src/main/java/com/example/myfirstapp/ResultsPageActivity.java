@@ -10,17 +10,23 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class ResultsPageActivity extends AppCompatActivity {
+    static final String TAG = "ResultsPageActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,15 +35,17 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String message = intent.getStringExtra(MainActivity.IMAGE_FILE_NAME);
+        String imageFilePath = intent.getStringExtra(MainActivity.IMAGE_FILE_NAME);
+        float mScaleFactor = intent.getFloatExtra(ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR, 1);
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView2);
-        textView.setText(message);
+        textView.setText(imageFilePath);
 
+        String resultsText = "";
         try {
             // disable online uploading functionality temporarily while front-end work is goign on.
-            String response = uploadFile(message);
+            String response = uploadFile(imageFilePath, mScaleFactor);
 //            String response = "OK - " + message;
             if (response.charAt(0) != '[') {
                 textView.setText(response);
@@ -58,24 +66,31 @@ public class ResultsPageActivity extends AppCompatActivity {
                     }
                     textView.setText(Html.fromHtml(htmlText));
                 }
+                StringBuilder resultsTextBuilder = new StringBuilder();
+                for (int i = 0; i < results.size(); i++ ) {
+                    if (results.get(i).contains("POSITIVE")) {
+                        resultsTextBuilder.append("+,");
+                    } else if (results.get(i).contains("NEGATIVE")) {
+                        resultsTextBuilder.append("-,");
+                    } else if (results.get(i).contains("CONTROL")) {
+                        resultsTextBuilder.append("C");
+                    }
+                }
+                resultsText = resultsTextBuilder.toString();
             }
-
+            Log.d(TAG, resultsText);
+            saveResultsFile(imageFilePath, resultsText);
 
         } catch (Exception e) {
             //textView.setText(message + " upload failed");
             textView.setText(e.getMessage());
-            Log.e("Camera", "exception", e);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                textView.setText(Html.fromHtml("<h2>Results</h2><br><p>Strip 1: Positive</p><p>Strip2: Positive here</p><p>Strip3: Control</p>", Html.FROM_HTML_MODE_COMPACT));
-            } else {
-                textView.setText(Html.fromHtml("<p>Strip 1: Positive</p><p>Strip2: Positive here</p><p>Strip3: Control</p>"));
-            }
+            Log.e(TAG, "exception", e);
         }
 
 
     }
 
-    public String uploadFile(String imagePath) throws Exception {
+    public String uploadFile(String imagePath, float mScaleFactor) throws Exception {
         String fileName = imagePath;
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
@@ -102,7 +117,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         conn.setRequestProperty("ENCTYPE", "multipart/form-data");
         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
         conn.setRequestProperty("upload", fileName);
-//        conn.setRequestProperty("tlx-pixel", tlxpixel); // top-left pixel coordinate
+        conn.setRequestProperty("mScaleFactor", String.valueOf(mScaleFactor)); // top-left pixel coordinate
 //        conn.setRequestProperty("tly-pixel", tlypixel);
 //        conn.setRequestProperty("brx-pixel", brxpixel);
 //        conn.setRequestProperty("bry-pixel", brypixel); // bottom right pixel coordinate
@@ -166,13 +181,20 @@ public class ResultsPageActivity extends AppCompatActivity {
         return serverResponseMessage;
     }
 
-    public Boolean saveResultsFile(String imagePath, String serverResponse) {
+    public Boolean saveResultsFile(String imagePath, String resultsText) {
         File image_file = new File(imagePath);
         String image_name = image_file.getName();
         String sample_name = image_name.substring(0, image_name.length() - 4);
         File results_file = new File(image_file.getParentFile().toString(), sample_name + ".txt");
-
-        // TODO: save file.
+        Log.d(TAG, "resultsText: " + resultsText);
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(results_file), StandardCharsets.UTF_8))) {
+            writer.write(resultsText);
+        }
+        catch (Exception e) {
+            //textView.setText(message + " upload failed");
+            Log.e(TAG, "exception", e);
+        }
 
         return Boolean.TRUE;
     }
