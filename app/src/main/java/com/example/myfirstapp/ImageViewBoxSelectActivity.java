@@ -44,16 +44,19 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
     public static final String CAMERA_DATE_FORMAT = "yyyyMMdd_HHmmss";
     public static final String RESULTS_DIRECTORY = "/results";
     private static final String TAG = "ImageViewBoxSelectAct";
+    public static final String M_Y_SCALE_FACTOR = "mYScaleFactor";
     private long mLastAnalysisResultTime;
     private double exposure_required = 1;
-
+    private float imageViewScaleFactor;
+    private Bitmap sourceImage;
     private int viewHeight;
     private int viewWidth;
 
     private class Box extends View {
         private Paint paint = new Paint();
         private ScaleGestureDetector mScaleGestureDetector;
-        private float mScaleFactor = 1.f;
+        public float mScaleFactor = 1.f;
+        public float mRectArea = 0;
         private static final int INVALID_POINTER_ID = -1;
         private int mActivePointerId = INVALID_POINTER_ID;
         private float mPrevX;
@@ -188,6 +191,13 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
             paint.setStrokeWidth(x0 / 100);
             //draw guide box
             canvas.drawRect(x0 - strip_width * 2, (y0 - strip_height) / 2, x0 - strip_width, y0 - (y0 - strip_height) / 2, paint);
+            mRectArea = (strip_width * strip_height * mScaleFactor);
+            Log.d(TAG, "mPosX: " + mPosX);
+            Log.d(TAG, "mPosY: " + mPosY);
+            Log.d(TAG, "mScaleFactor: " + mScaleFactor);
+            Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
+            Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
+
             paint.setStrokeWidth(x0 / 200);
             paint.setTextSize(16 * getResources().getDisplayMetrics().density);
             canvas.drawText("Ctrl", x0 - strip_width * 2, (y0 - strip_height) / 2 - (y0 - strip_height) / 20, paint);
@@ -221,7 +231,7 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
         }
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 16;
-        Bitmap sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+        sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 //        imageView.setImageBitmap(sourceImage);
         Matrix rotationMatrix = new Matrix();
         imageView.setImageURI(Uri.fromFile(imageFile));
@@ -235,8 +245,12 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.capturedImage);
         imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        viewWidth = imageView.getMeasuredWidth();
-        viewHeight = imageView.getMeasuredHeight();
+        viewWidth = imageView.getMeasuredWidth(); // this is the image width
+        viewHeight = imageView.getMeasuredHeight(); // this is the image height
+
+        Log.d(TAG, "viewWidth: " + viewWidth);
+        Log.d(TAG, "viewHeight: " + viewHeight);
+
 
         addBox(photoFilePath);
 
@@ -257,6 +271,7 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
         Intent resultsPageIntent = new Intent(this, ResultsPageActivity.class);
         resultsPageIntent.putExtra(IMAGE_FILE_NAME, photoFilePath);
 
+
         ImageButton sendToResultsButton = findViewById(R.id.sendToServerButton);
 
         Box box = new Box(this, sendToResultsButton);
@@ -268,6 +283,17 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "button pressed");
+                imageViewScaleFactor = box.getHeight() / box.getWidth() >
+                        viewHeight / viewWidth ?
+                        (float) viewWidth / box.getWidth() :
+                        (float) viewHeight / box.getHeight()  ;
+                // M_Y_SCALE_FACTOR is the total number of pixels in the jpg file that correspond
+                // to the user-enclosed box.
+                resultsPageIntent.putExtra(M_Y_SCALE_FACTOR, box.mRectArea *
+                        imageViewScaleFactor * imageViewScaleFactor);
+                Log.d(TAG, "" + box.mRectArea);
+                Log.d(TAG, "" + box.mRectArea *
+                        imageViewScaleFactor * imageViewScaleFactor);
                 startActivity(resultsPageIntent);
             }
         });
