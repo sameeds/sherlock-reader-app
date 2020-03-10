@@ -187,7 +187,7 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
             float strip_height = strip_ratio * strip_width;
 
             paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(Color.GREEN);
+            paint.setColor(Color.BLUE);
             paint.setStrokeWidth(x0 / 100);
             //draw guide box
             canvas.drawRect(x0 - strip_width * 2, (y0 - strip_height) / 2, x0 - strip_width, y0 - (y0 - strip_height) / 2, paint);

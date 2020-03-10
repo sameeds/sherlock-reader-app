@@ -1,12 +1,25 @@
 package com.example.myfirstapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -25,6 +38,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
+import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
+
 public class ResultsPageActivity extends AppCompatActivity {
     static final String TAG = "ResultsPageActivity";
 
@@ -40,34 +56,157 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView2);
-        textView.setText(imageFilePath);
+        textView.setText("");
 
         String resultsText = "";
         try {
-            // disable online uploading functionality temporarily while front-end work is goign on.
             String response = uploadFile(imageFilePath, mScaleFactor);
+
+
+            ImageView imageView = (ImageView) findViewById(R.id.processedImage);
+            Log.d(TAG, "imageFilePath: " + imageFilePath);
+            File imageFile = new File(imageFilePath);
+            if (!imageFile.exists()) {
+                Log.d(TAG, "DOES NOT EXIST: " + imageFilePath);
+
+            }
+            Bitmap sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.postRotate(getCameraPhotoOrientation(this,
+                    FileProvider.getUriForFile(this,
+                            "com.example.myfirstapp.provider",
+                            new File(imageFilePath)),
+                    imageFilePath));
+
+            Bitmap bitmap = Bitmap.createBitmap(sourceImage, 0, 0,
+                    sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true);
+            imageView.setImageBitmap(bitmap);
+
+            // set up Paint object
+            imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            Log.e(TAG, "" + imageView.getMeasuredWidth());
+            Integer stroke_width = (Integer) imageView.getMeasuredWidth() / 135;
+            Paint p = new Paint();
+            p.setAntiAlias(true);
+            p.setStyle(Paint.Style.STROKE);
+            p.setColor(Color.BLACK);
+            p.setTextSize(40 * getResources().getDisplayMetrics().density);
+            p.setStrokeWidth(stroke_width);
+
+
+            // Create Temp bitmap
+            Bitmap tBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+                    Bitmap.Config.RGB_565);
+            // Create a new canvas and add Bitmap into it
+            Canvas tCanvas = new Canvas(tBitmap);
+            //Draw the image bitmap into the canvas
+            tCanvas.drawBitmap(bitmap, 0, 0, null);
+            // Draw a rectangle over canvas
+
 //            String response = "OK - " + message;
             if (response.charAt(0) != '[') {
                 textView.setText(response);
             } else {
-                response = response.substring(1, response.length()-1);
+                // The results string has the following format:
+                // [{(x1,y1):(x2,y2):(x3,y3):(x4,y4);(x1,y1):(x2,y2):(x3,y3):(x4,y4)}
+                //      <results>POSITIVE,CONTROL]
+                // where the coordnates are bottom left, top left, top right, and bottom right
+                // coordinates of each strip.
+                String full_response = response.substring(1, response.length() - 1);
+                String results_cue = "<results>";
+                String signal_response = full_response.substring(full_response.indexOf(results_cue)
+                        + results_cue.length(), full_response.length() - 1);
                 ArrayList<String> results = new ArrayList<>(Arrays.asList(
-                        response.split(",")));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    String htmlText = "<h2>Results</h2><br>";
-                    for (int i = 0; i < results.size(); i++ ){
-                        htmlText += "<p> Strip " + i + ": " + results.get(i) + "</p>";
+                        signal_response.split(",")));
+                String strips_info = full_response.substring(1,
+                        full_response.indexOf(results_cue) - 1);
+                Log.d(TAG, strips_info);
+                ArrayList<String> strip_positions = new ArrayList<>(Arrays.asList(
+                        strips_info.split(";")));
+                // strip_positions should look like
+                // (x1,y1):(x2,y2):(x3,y3):(x4,y4)
+                if (true) {
+                    for (int i = 0; i < results.size(); i++) {
+                        ArrayList<String> corners = new ArrayList<>(Arrays.asList(
+                                strip_positions.get(i).split(":")));
+                        Log.d(TAG, corners.toString());
+                        Integer bl_x = Integer.parseInt(corners.get(0).substring(1,
+                                corners.get(0).indexOf(",")));
+                        Integer bl_y = Integer.parseInt(corners.get(0).substring(corners.get(0).indexOf(",")
+                                + 1, corners.get(0).length() - 1));
+                        Log.d(TAG, "bl");
+                        Log.d(TAG, corners.get(0));
+                        Log.d(TAG, bl_y.toString());
+
+                        Integer tl_x = Integer.parseInt(corners.get(1).substring(1,
+                                corners.get(1).indexOf(",")));
+                        Integer tl_y = Integer.parseInt(corners.get(1).substring(corners.get(1).indexOf(",")
+                                + 1, corners.get(1).length() - 1));
+                        Log.d(TAG, "tl");
+                        Log.d(TAG, tl_x.toString());
+                        Log.d(TAG, tl_y.toString());
+
+                        Integer tr_x = Integer.parseInt(corners.get(2).substring(1,
+                                corners.get(2).indexOf(",")));
+                        Integer tr_y = Integer.parseInt(corners.get(2).substring(corners.get(2).indexOf(",")
+                                + 1, corners.get(2).length() - 1));
+                        Log.d(TAG, "tr");
+                        Log.d(TAG, tr_x.toString());
+                        Log.d(TAG, tr_y.toString());
+
+                        Integer br_x = Integer.parseInt(corners.get(3).substring(1,
+                                corners.get(3).indexOf(",")));
+                        Integer br_y = Integer.parseInt(corners.get(3).substring(corners.get(3).indexOf(",")
+                                + 1, corners.get(3).length() - 1));
+                        Log.d(TAG, "br");
+                        Log.d(TAG, br_x.toString());
+                        Log.d(TAG, br_y.toString());
+//            canvas.drawText("Ctrl", x0 - strip_width * 2, (y0 - strip_height) / 2 - (y0 - strip_height) / 20, paint);
+                        Integer strip_height = tl_y - bl_y;
+                        if ("POSITIVE".equals(results.get(i))) {
+                            p.setColor(Color.RED);
+                            addCallText(tCanvas, p, "+", tl_x, tr_x,
+                                    tl_y + strip_height / 20);
+                        } else if ("NEGATIVE".equals(results.get(i))) {
+                            p.setColor(Color.BLUE);
+                            addCallText(tCanvas, p, "-", tl_x, tr_x,
+                                    tl_y + strip_height / 20);
+                        } else {
+                            p.setColor(Color.BLUE);
+                            addCallText(tCanvas, p, "C", tl_x, tr_x,
+                                    tl_y + strip_height / 20);
+                        }
+
+                        tCanvas.drawLine(bl_x, bl_y, tl_x, tl_y, p);
+                        tCanvas.drawLine(bl_x - stroke_width / 2, bl_y,
+                                br_x + stroke_width / 2, br_y, p);
+                        tCanvas.drawLine(tr_x, tr_y, br_x, br_y, p);
+                        tCanvas.drawLine(tr_x + stroke_width / 2, tr_y,
+                                tl_x - stroke_width / 2, tl_y, p);
                     }
-                    textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
-                } else {
-                    String htmlText = "<p>Results</p><p></p>";
-                    for (int i = 0; i < results.size(); i++ ){
-                        htmlText += "<p> Strip " + i + ": " + results.get(i) + "</p>";
-                    }
-                    textView.setText(Html.fromHtml(htmlText));
                 }
+
+                imageView.setImageDrawable(new BitmapDrawable(getResources(), tBitmap));
+
+
+                // write to page:
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    String htmlText = "<h2>Results</h2><br>";
+//                    for (int i = 0; i < results.size(); i++) {
+//                        htmlText += "<p> Strip " + i + ": " + results.get(i) + "</p>";
+//                    }
+//                    textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
+//                } else {
+//                    String htmlText = "<p>Results</p><p></p>";
+//                    for (int i = 0; i < results.size(); i++) {
+//                        htmlText += "<p> Strip " + i + ": " + results.get(i) + "</p>";
+//                    }
+//                    textView.setText(Html.fromHtml(htmlText));
+//                }
+
+                // Create string to save
                 StringBuilder resultsTextBuilder = new StringBuilder();
-                for (int i = 0; i < results.size(); i++ ) {
+                for (int i = 0; i < results.size(); i++) {
                     if (results.get(i).contains("POSITIVE")) {
                         resultsTextBuilder.append("+,");
                     } else if (results.get(i).contains("NEGATIVE")) {
@@ -86,8 +225,17 @@ public class ResultsPageActivity extends AppCompatActivity {
             textView.setText(e.getMessage());
             Log.e(TAG, "exception", e);
         }
+    }
 
-
+    private void addCallText(Canvas canvas, Paint paint, String text, Integer left, Integer right,
+                            Integer y) {
+        Rect r = new Rect();
+        canvas.getClipBounds(r);
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.getTextBounds(text, 0, text.length(), r);
+        Log.e(TAG, "" + r.width());
+        Integer x = left +  (right - left)/2 - r.width()/2;
+        canvas.drawText(text, x, y, paint);
     }
 
     public String uploadFile(String imagePath, float mScaleFactor) throws Exception {
@@ -190,8 +338,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(results_file), StandardCharsets.UTF_8))) {
             writer.write(resultsText);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             //textView.setText(message + " upload failed");
             Log.e(TAG, "exception", e);
         }
