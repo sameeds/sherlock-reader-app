@@ -106,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
      */
     public void activateCamera(View view) {
 //        Intent intent = new Intent(this, CameraActivity.class);
-//        Intent intent = new Intent(this, SabetiLaunchCameraAppActivity.class);
-        Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
+        Intent intent = new Intent(this, SabetiLaunchCameraAppActivity.class);
+//        Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
 
         // Add the number of tubes indicated by the radio button
         Log.v(TAG, "numb_tubes: " + numb_tubes);

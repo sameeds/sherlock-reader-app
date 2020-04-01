@@ -61,10 +61,12 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         public float mRectArea = 0;
         private static final int INVALID_POINTER_ID = -1;
         private int mActivePointerId = INVALID_POINTER_ID;
+        private float mOrigX1, mOrigY1, mCurrX1, mCurrY1, mOrigX2, mOrigY2, mCurrX2, mCurrY2;
         private float mPrevX;
         private float mPrevY;
         private float mPosX = 0f;
         private float mPosY = 0f;
+        private float angle = 0f;
         private Context mContext;
         private RelativeLayout mOuterContainerLayout;
         private RelativeLayout.LayoutParams mOuterButtonParams;
@@ -101,13 +103,26 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         @Override
         public boolean onTouchEvent(MotionEvent ev) {
             // Let the ScaleGestureDetector inspect all events.
+            View view = this;
             boolean retVal = mScaleGestureDetector.onTouchEvent(ev);
             final int eventAction = ev.getAction();
             switch (eventAction & MotionEvent.ACTION_MASK) {
                 case MotionEvent.ACTION_DOWN: {
+                    mOrigX1 = ev.getX();
+                    mOrigY1 = ev.getY();
+                    mCurrX1 = ev.getX();
+                    mCurrY1 = ev.getY();
                     mPrevX = ev.getX();
                     mPrevY = ev.getY();
                     mActivePointerId = ev.getPointerId(0);
+                    break;
+                }
+
+                case MotionEvent.ACTION_POINTER_DOWN: {
+                    mOrigX2 = ev.getX();
+                    mOrigY2 = ev.getY();
+                    mCurrX2 = ev.getX();
+                    mCurrY2 = ev.getY();
                     break;
                 }
 
@@ -247,14 +262,14 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
 //        imageView.setImageBitmap(sourceImage);
         Matrix rotationMatrix = new Matrix();
-//        imageView.setImageURI(Uri.fromFile(imageFile));
-//        rotationMatrix.postRotate(getCameraPhotoOrientation(this,
-//                FileProvider.getUriForFile(this,
-//                        "com.example.myfirstapp.provider",
-//                        new File(photoFilePath)),
-//                photoFilePath));
-//        imageView.setImageBitmap(Bitmap.createBitmap(sourceImage, 0, 0,
-//                sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true));
+        imageView.setImageURI(Uri.fromFile(imageFile));
+        rotationMatrix.postRotate(getCameraPhotoOrientation(this,
+                FileProvider.getUriForFile(this,
+                        "com.example.myfirstapp.provider",
+                        new File(photoFilePath)),
+                photoFilePath));
+        imageView.setImageBitmap(Bitmap.createBitmap(sourceImage, 0, 0,
+                sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true));
 
         imageView = findViewById(R.id.capturedImage);
         imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);

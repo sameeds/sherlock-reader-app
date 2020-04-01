@@ -24,10 +24,12 @@ import java.util.Date;
 import java.util.Locale;
 
 import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
+import static com.example.myfirstapp.MainActivity.NUMB_STRIPS;
 
 public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
     private ImageView imageView;
     File photoFile = null;
+    String numb_tubes;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +37,12 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 
         imageView = (ImageView) findViewById(R.id.cameraCaptureimageView);
 
+        // Get the Intent that started this activity and extract messages
+        Intent intent = getIntent();
+        String message = intent.getStringExtra(EXTRA_MESSAGE);
+        numb_tubes = intent.getStringExtra(NUMB_STRIPS);
+
         if (allPermissionsGranted()) {
-            // Get the Intent that started this activity and extract the string
-            Intent intent = getIntent();
-            String message = intent.getStringExtra(EXTRA_MESSAGE);
             dispatchTakePictureIntent(message);
         } else {
             ActivityCompat.requestPermissions(this,
@@ -78,9 +82,9 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            imageView.setImageBitmap(imageBitmap);
-
-            Intent intent = new Intent(this, ImageViewBoxSelectActivity.class);
+            Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
             intent.putExtra(EXTRA_MESSAGE, photoFile.getAbsolutePath());
+            intent.putExtra(NUMB_STRIPS, numb_tubes);
             startActivity(intent);
 //
 //            Log.d("SabetiLaunchCameraAp...", "setting ImageView");
