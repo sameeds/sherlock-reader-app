@@ -61,6 +61,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         public float mRectArea = 0;
         private static final int INVALID_POINTER_ID = -1;
         private int mActivePointerId = INVALID_POINTER_ID;
+        private int mActivePointerId2 = INVALID_POINTER_ID;
         private float mOrigX1, mOrigY1, mCurrX1, mCurrY1, mOrigX2, mOrigY2, mCurrX2, mCurrY2;
         private float mPrevX;
         private float mPrevY;
@@ -123,6 +124,8 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                     mOrigY2 = ev.getY();
                     mCurrX2 = ev.getX();
                     mCurrY2 = ev.getY();
+                    final int pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                    mActivePointerId2 = ev.getPointerId(pointerIndex);
                     break;
                 }
 
@@ -139,6 +142,25 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                         mPosY += dy;
                         invalidate();
                     }
+
+                    // enable rotation:
+                    if (mActivePointerId2 != INVALID_POINTER_ID) {
+                        pointerIndex = (ev.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
+                        int pointerId = ev.getPointerId(pointerIndex);
+                        if (pointerId == mActivePointerId) {
+                            mCurrX1 = ev.getX();
+                            mCurrY1 = ev.getY();
+                        } else if (pointerId == mActivePointerId2) {
+                            mCurrX2 = ev.getX();
+                            mCurrY2 = ev.getY();
+                        }
+
+                        double angle1 = (Math.toDegrees(Math.atan(mOrigY2 / mOrigX2) - Math.atan(mOrigY1 / mOrigX1)) + 360) % 360;
+                        double angle2 = (Math.toDegrees(Math.atan(mCurrY2 / mCurrX2) - Math.atan(mCurrY1 / mCurrX1)) + 360) % 360;
+
+                        angle = (float) (angle1 - angle2);
+                    }
+
                     mPrevX = currX;
                     mPrevY = currY;
                     break;
@@ -159,6 +181,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL: {
                     mActivePointerId = INVALID_POINTER_ID;
+                    mActivePointerId2 = INVALID_POINTER_ID;
                     break;
                 }
             }
@@ -189,6 +212,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
 
             canvas.save();
             canvas.scale(mScaleFactor, mScaleFactor);
+//            canvas.rotate(angle, getWidth() / 2, getHeight() / 2);
             canvas.translate(mPosX, mPosY);
 
             //center
