@@ -16,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -67,35 +68,31 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         private float mPrevY;
         private float mPosX = 0f;
         private float mPosY = 0f;
-        private float angle = 0f;
+        public float mAngle = 0f; // in degrees
         private Context mContext;
         private RelativeLayout mOuterContainerLayout;
         private RelativeLayout.LayoutParams mOuterButtonParams;
         private RelativeLayout.LayoutParams mInnerContainerLayoutParams;
+        private RelativeLayout mOuterContainerLayout2;
+        private RelativeLayout.LayoutParams mOuterButtonParams2;
+        private RelativeLayout.LayoutParams mInnerContainerLayoutParams2;
+        private RelativeLayout mOuterContainerLayout3;
+        private RelativeLayout.LayoutParams mOuterButtonParams3;
+        private RelativeLayout.LayoutParams mInnerContainerLayoutParams3;
         private ImageButton mImageButton;
+        private Button mRotatePlusButton;
+        private Button mRotateMinusButton;
+        private Boolean mlayoutParamsSet;
 
-        Box(Context context, ImageButton imageButton) {
+        Box(Context context, ImageButton imageButton, Button rotatePlusButton,
+            Button rotateMinusButton) {
             super(context);
             mContext = context;
             mImageButton = imageButton;
+            mRotatePlusButton = rotatePlusButton;
+            mRotateMinusButton = rotateMinusButton;
+            mlayoutParamsSet = false;
             // mlinearLayout =  linearLayout;
-            mOuterContainerLayout = new RelativeLayout(mContext);
-            mOuterContainerLayout.setLayoutParams(new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT));
-
-            mOuterButtonParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.WRAP_CONTENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-            mOuterButtonParams.addRule(RelativeLayout.CENTER_IN_PARENT,
-                    RelativeLayout.TRUE);
-
-            mInnerContainerLayoutParams = new RelativeLayout.LayoutParams(
-                    RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.MATCH_PARENT);
-            mInnerContainerLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT,
-                    RelativeLayout.TRUE);
-
             mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
 //            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener());
 
@@ -158,7 +155,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                         double angle1 = (Math.toDegrees(Math.atan(mOrigY2 / mOrigX2) - Math.atan(mOrigY1 / mOrigX1)) + 360) % 360;
                         double angle2 = (Math.toDegrees(Math.atan(mCurrY2 / mCurrX2) - Math.atan(mCurrY1 / mCurrX1)) + 360) % 360;
 
-                        angle = (float) (angle1 - angle2);
+                        // mAngle = (float) (angle1 - angle2);
                     }
 
                     mPrevX = currX;
@@ -210,13 +207,73 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             }
         }
 
+        private void setupLayoutParams(){
+            mOuterContainerLayout = new RelativeLayout(mContext);
+            mOuterContainerLayout.setLayoutParams(new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT));
+
+            mOuterButtonParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
+            mOuterButtonParams.addRule(RelativeLayout.CENTER_IN_PARENT,
+                    RelativeLayout.TRUE);
+
+            mInnerContainerLayoutParams = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+            mInnerContainerLayoutParams.addRule(RelativeLayout.CENTER_IN_PARENT,
+                    RelativeLayout.TRUE);
+
+
+            int x0 = getWidth()/8;
+
+            mOuterContainerLayout2 = new RelativeLayout(mContext);
+            mOuterContainerLayout2.setLayoutParams(new RelativeLayout.LayoutParams(
+                    x0, x0));
+
+            mOuterButtonParams2 = new RelativeLayout.LayoutParams(
+                    x0, x0);
+            mOuterButtonParams2.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
+                    RelativeLayout.TRUE);
+
+            mInnerContainerLayoutParams2 = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+            mInnerContainerLayoutParams2.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
+                    RelativeLayout.TRUE);
+
+
+            mOuterContainerLayout3 = new RelativeLayout(mContext);
+            mOuterContainerLayout3.setLayoutParams(new RelativeLayout.LayoutParams(
+                    x0,
+                    x0));
+
+            mOuterButtonParams3 = new RelativeLayout.LayoutParams(
+                    x0,
+                    x0);
+            mOuterButtonParams3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
+                    RelativeLayout.TRUE);
+
+            mInnerContainerLayoutParams3 = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+            mInnerContainerLayoutParams3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
+                    RelativeLayout.TRUE);
+        }
+
         @Override
         protected void onDraw(Canvas canvas) { // Override the onDraw() Method
             super.onDraw(canvas);
 
+            if (!mlayoutParamsSet) {
+                setupLayoutParams();
+                mlayoutParamsSet = true;
+            }
+
             canvas.save();
             canvas.scale(mScaleFactor, mScaleFactor);
-            canvas.rotate(angle, getWidth() / 2, getHeight() / 2);
+            canvas.rotate(mAngle, getWidth() / 2, getHeight() / 2);
             canvas.translate(mPosX, mPosY);
 
             //center
@@ -255,7 +312,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             Log.d(TAG, "mScaleFactor: " + mScaleFactor);
             Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
             Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
-
+            Log.d(TAG, "mImageButton.getId(): " + mImageButton.getId());
 
             ((ViewGroup) mImageButton.getParent()).removeView(mImageButton);
 //            ((ViewGroup)this.getParent()).addView(mImageButton);
@@ -266,6 +323,25 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 ((ViewGroup) mOuterContainerLayout.getParent()).removeView(mOuterContainerLayout);
             }
             addContentView(mOuterContainerLayout, mInnerContainerLayoutParams);
+
+            ((ViewGroup) mRotateMinusButton.getParent()).removeView(mRotateMinusButton);
+            mOuterButtonParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            mRotateMinusButton.setLayoutParams(mOuterButtonParams2);
+            mOuterContainerLayout2.addView(mRotateMinusButton);
+            if (((ViewGroup) mOuterContainerLayout2.getParent()) != null) {
+                ((ViewGroup) mOuterContainerLayout2.getParent()).removeView(mOuterContainerLayout2);
+            }
+            addContentView(mOuterContainerLayout2, mInnerContainerLayoutParams2);
+
+            ((ViewGroup) mRotatePlusButton.getParent()).removeView(mRotatePlusButton);
+            mOuterButtonParams3.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+            mRotatePlusButton.setLayoutParams(mOuterButtonParams3);
+            mOuterContainerLayout3.addView(mRotatePlusButton);
+            if (((ViewGroup) mOuterContainerLayout3.getParent()) != null) {
+                ((ViewGroup) mOuterContainerLayout3.getParent()).removeView(mOuterContainerLayout3);
+            }
+            addContentView(mOuterContainerLayout3, mInnerContainerLayoutParams3);
+
             canvas.restore();
 
         }
@@ -274,7 +350,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_image_view_box_select);
+        setContentView(R.layout.activity_image_view_strip_tube_select);
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
         String photoFilePath = getIntent().getStringExtra(EXTRA_MESSAGE);
@@ -314,6 +390,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        finish();
         startActivity(new Intent(this, MainActivity.class));
     }
 
@@ -329,8 +406,10 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
 
 
         ImageButton sendToResultsButton = findViewById(R.id.sendToServerButton);
+        Button rotatePlusButton = findViewById(R.id.rotatePlus);
+        Button rotateMinusButton = findViewById(R.id.rotateMinus);
 
-        Box box = new Box(this, sendToResultsButton);
+        Box box = new Box(this, sendToResultsButton, rotatePlusButton, rotateMinusButton);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         addContentView(box, params);
@@ -354,6 +433,24 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             }
         });
 
+        rotatePlusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "rotatePlusButton clicked");
+                box.mAngle += 1.5;
+                box.invalidate();
+            }
+        });
+
+        rotateMinusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "rotateMinusButton clicked");
+                box.mAngle -= 1.5;
+                box.invalidate();
+                Log.d(TAG, "mAngle: " + box.mAngle);
+            }
+        });
     }
 
 }

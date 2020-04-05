@@ -4,22 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context=".ImageViewBoxSelectActivity">
 
     <!--    <&#45;&#45; Code inspired by https://github.com/journaldev/journaldev/tree/master/Android/AndroidCameraX (MIT license) -->
+
     <ImageView
         android:id="@+id/capturedImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:src="@drawable/strip_tube"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        android:src="@drawable/strip_tube"/>
+        app:layout_constraintVertical_bias="0.0" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sendToServerButtonLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dip"
@@ -29,16 +31,47 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
 
+        <Button
+            android:id="@+id/rotatePlus"
+            style="@android:style/Widget.Holo.Light.Button"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="+"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="@+id/sendToServerButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sendToServerButton"
+            app:layout_constraintTop_toTopOf="@+id/sendToServerButton" />
+
         <ImageButton
             android:id="@+id/sendToServerButton"
+            style="@android:style/Widget.Holo.Light.ImageButton"
             android:layout_width="72dp"
             android:layout_height="72dp"
+            android:layout_gravity="center_horizontal|center"
             android:layout_margin="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_gravity="center_horizontal|center"
             app:srcCompat="@android:drawable/ic_menu_upload" />
-    </LinearLayout>
+
+        <Button
+            android:id="@+id/rotateMinus"
+            style="@android:style/Widget.Holo.Light.ImageButton"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="-"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/sendToServerButton"
+            app:layout_constraintEnd_toStartOf="@+id/sendToServerButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sendToServerButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

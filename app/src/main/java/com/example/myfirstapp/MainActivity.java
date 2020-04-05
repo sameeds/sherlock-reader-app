@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main);
 
-        if(!allPermissionsGranted()){
+        if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
 
@@ -51,15 +51,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 Log.d("chk", "id" + checkedId);
-                switch(checkedId) {
+                switch (checkedId) {
                     case R.id.tubecount2:
-                            numb_tubes = 2;
+                        numb_tubes = 2;
                         break;
                     case R.id.tubecount8:
-                            numb_tubes = 8;
+                        numb_tubes = 8;
                         break;
                     case R.id.tubecount12:
-                            numb_tubes = 12;
+                        numb_tubes = 12;
                         break;
                 }
             }
@@ -136,5 +136,11 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, permission + " granted");
         }
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finishAffinity();
     }
 }

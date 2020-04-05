@@ -40,6 +40,7 @@ dependencies {
         exclude module: "httpclient"
     }
     implementation 'com.android.support:appcompat-v7:+'
+    implementation 'com.google.android.material:material:1.1.0'
 
 
 }
