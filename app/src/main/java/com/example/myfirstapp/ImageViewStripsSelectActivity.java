@@ -175,6 +175,10 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                         mPrevX = ev.getX(newPointerIndex);
                         mPrevY = ev.getY(newPointerIndex);
                         mActivePointerId = ev.getPointerId(newPointerIndex);
+                        mActivePointerId2 = INVALID_POINTER_ID;
+                    }
+                    else {
+                        mActivePointerId2 = INVALID_POINTER_ID;
                     }
                     break;
                 }
@@ -212,7 +216,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
 
             canvas.save();
             canvas.scale(mScaleFactor, mScaleFactor);
-//            canvas.rotate(angle, getWidth() / 2, getHeight() / 2);
+            canvas.rotate(angle, getWidth() / 2, getHeight() / 2);
             canvas.translate(mPosX, mPosY);
 
             //center

@@ -30,6 +30,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
     private ImageView imageView;
     File photoFile = null;
     String numb_tubes;
+    private Boolean cameraAccessed = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,13 +43,19 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String message = intent.getStringExtra(EXTRA_MESSAGE);
         numb_tubes = intent.getStringExtra(NUMB_STRIPS);
-
         if (allPermissionsGranted()) {
             dispatchTakePictureIntent(message);
         } else {
             ActivityCompat.requestPermissions(this,
                     MainActivity.REQUIRED_PERMISSIONS,
                     MainActivity.REQUEST_CODE_PERMISSIONS);
+        }
+    }
+
+    public void onResume() {
+        super.onResume();
+        if (cameraAccessed) {
+            startActivity(new Intent(this, MainActivity.class));
         }
     }
 
@@ -108,10 +116,13 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 //            }
 
         }
+        else{
+            startActivity(new Intent(this, MainActivity.class));
+        }
     }
 
     public static int getCameraPhotoOrientation(Context context, Uri imageUri,
-                                         String imagePath) {
+                                                String imagePath) {
         // source: https://stackoverflow.com/a/36995847
         // MIT license (https://meta.stackexchange.com/questions/271080)
         int rotate = 0;
@@ -156,8 +167,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 //                String fileName = storageDir + "/results/" + imageFileName + ".jpg";
         if (!outputDirectory.exists()) {
             if (!outputDirectory.mkdirs()) {
-                        Log.e("SabetiLaunchcameraAp...",
-                                "Failed to create directory: " + outputDirectory.getAbsolutePath());
+                Log.e("SabetiLaunchcameraAp...",
+                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
                 outputDirectory = null;
             }
         }

@@ -17,6 +17,7 @@ package com.example.myfirstapp;
  * limitations under the License.
  */
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -34,6 +35,10 @@ import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
 public class CameraActivity extends AppCompatActivity {
 
     String sampleName;
+
+    public void onBackPressed() {
+        startActivity(new Intent(this, MainActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
