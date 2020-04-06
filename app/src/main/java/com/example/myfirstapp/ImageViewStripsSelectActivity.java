@@ -289,9 +289,13 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             Log.d(TAG, "yLoc: " + yLoc);
 
             canvas.save();
-            canvas.rotate(-1 * mAngle, getWidth() / 2, getHeight() / 2);
-            canvas.translate(mPosX, mPosY);
             canvas.scale(mScaleFactor, mScaleFactor);
+            canvas.translate(mPosX, mPosY);
+            canvas.rotate(-1 * mAngle, getWidth() / 2, getHeight() / 2);
+
+            canvas.drawRect(getWidth() / 2.0f, getHeight() / 2.0f,
+                    getWidth() / 2.0f + 20, getHeight() / 2.0f + 40, paint);
+
 
             //center
             float strip_ratio = 233.0f / 86.0f;
@@ -490,15 +494,21 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                     if (theta < 0) {
                         theta += 360;
                     }
-                    double d = Math.sqrt((box.getWidth() / 2.0f - xLoc ) *
-                            (box.getWidth() / 2.0f - xLoc) +
-                            (box.getHeight() / 2.0f - yLoc) *
-                                    (box.getHeight() / 2.0f - yLoc));
+                    float xLoc_centered = (xLoc - box.getWidth() / 2.0f);
+                    float yLoc_centered = (box.getHeight() / 2.0f - yLoc);
+                    double d = Math.sqrt(xLoc_centered * xLoc_centered +
+                            yLoc_centered * yLoc_centered);
 
-                    box.xLoc = box.getWidth() / 2.0f + (float) d * (float) Math.cos(Math.toRadians(theta + box.mAngle));
-                    box.yLoc = box.getHeight() / 2.0f - (float) d * (float) Math.sin(Math.toRadians(theta + box.mAngle));
-                }
-                else{
+                    float nX = (float) xLoc_centered * (float) Math.cos(Math.toRadians(box.mAngle)) -
+                            (float) yLoc_centered * (float) Math.sin(Math.toRadians(box.mAngle));
+                    float nY = (float) xLoc_centered * (float) Math.sin(Math.toRadians(box.mAngle)) +
+                            (float) yLoc_centered * (float) Math.cos(Math.toRadians(box.mAngle));
+                    box.xLoc = box.getWidth() / 2.0f + nX;
+                    box.yLoc = box.getHeight() / 2.0f - nY;
+
+//                    box.xLoc = box.getWidth() / 2.0f + (float) d * (float) Math.cos(Math.toRadians(theta + box.mAngle));
+//                    box.yLoc = box.getHeight() / 2.0f - (float) d * (float) Math.sin(Math.toRadians(theta + box.mAngle));
+                } else {
                     box.xLoc = xLoc;
                     box.yLoc = yLoc;
                 }
