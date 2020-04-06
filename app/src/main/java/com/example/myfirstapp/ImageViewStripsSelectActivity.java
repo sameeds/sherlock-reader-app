@@ -27,6 +27,7 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 
+import static com.example.myfirstapp.ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR;
 import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
 import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
 import static com.example.myfirstapp.MainActivity.NUMB_STRIPS;
@@ -46,7 +47,11 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
     public static final String CAMERA_DATE_FORMAT = "yyyyMMdd_HHmmss";
     public static final String RESULTS_DIRECTORY = "/results";
     private static final String TAG = "ImageViewBoxSelectAct";
-    public static final String M_Y_SCALE_FACTOR = "mYScaleFactor";
+    public static final String m_TOP_LEFT_X = "mTopLeftX";
+    public static final String m_TOP_LEFT_Y = "mTopLeftY";
+    public static final String m_BOTTOM_RIGHT_X = "mBottomRightX";
+    public static final String m_BOTTOM_RIGHT_Y = "mBottomRightY";
+    public static final String M_ANGLE = "mAngle";
     private long mLastAnalysisResultTime;
     private double exposure_required = 1;
     private float imageViewScaleFactor;
@@ -83,6 +88,13 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         private Button mRotatePlusButton;
         private Button mRotateMinusButton;
         private Boolean mlayoutParamsSet;
+        private float xLoc = 0;
+        private float yLoc = 0;
+        private float leftCorner;
+        private float topCorner;
+        private float stripHeight;
+        private float stripWidth;
+
 
         Box(Context context, ImageButton imageButton, Button rotatePlusButton,
             Button rotateMinusButton) {
@@ -94,6 +106,8 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             mlayoutParamsSet = false;
             // mlinearLayout =  linearLayout;
             mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setColor(Color.parseColor("#FF8362"));
 //            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener());
 
         }
@@ -173,8 +187,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                         mPrevY = ev.getY(newPointerIndex);
                         mActivePointerId = ev.getPointerId(newPointerIndex);
                         mActivePointerId2 = INVALID_POINTER_ID;
-                    }
-                    else {
+                    } else {
                         mActivePointerId2 = INVALID_POINTER_ID;
                     }
                     break;
@@ -207,7 +220,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             }
         }
 
-        private void setupLayoutParams(){
+        private void setupLayoutParams() {
             mOuterContainerLayout = new RelativeLayout(mContext);
             mOuterContainerLayout.setLayoutParams(new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
@@ -226,7 +239,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                     RelativeLayout.TRUE);
 
 
-            int x0 = getWidth()/8;
+            int x0 = getWidth() / 8;
 
             mOuterContainerLayout2 = new RelativeLayout(mContext);
             mOuterContainerLayout2.setLayoutParams(new RelativeLayout.LayoutParams(
@@ -270,49 +283,56 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 setupLayoutParams();
                 mlayoutParamsSet = true;
             }
+            paint.setColor(Color.parseColor("#FFFFFF"));
+            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
+            Log.d(TAG, "xLoc: " + xLoc);
+            Log.d(TAG, "yLoc: " + yLoc);
 
             canvas.save();
-            canvas.scale(mScaleFactor, mScaleFactor);
-            canvas.rotate(mAngle, getWidth() / 2, getHeight() / 2);
+            canvas.rotate(-1 * mAngle, getWidth() / 2, getHeight() / 2);
             canvas.translate(mPosX, mPosY);
+            canvas.scale(mScaleFactor, mScaleFactor);
 
             //center
             float strip_ratio = 233.0f / 86.0f;
             int x0 = getWidth();
             int y0 = getHeight();
+            paint.setStrokeWidth(x0 / 100);
+            paint.setColor(Color.parseColor("#FF8362"));
 
             int max_tubes = 12;
             int tube_buffer = 0; // how many strip widths between each strip
             int total_height_strips = max_tubes + max_tubes * tube_buffer + tube_buffer;
 
-            float strip_height = y0 / (total_height_strips + 2);
-            float strip_width = strip_ratio * strip_height;
+            stripHeight = y0 / (total_height_strips + 2);
+            stripWidth = strip_ratio * stripHeight;
 
-            paint.setStyle(Paint.Style.STROKE);
-            paint.setColor(Color.parseColor("#FF8362"));
-            paint.setStrokeWidth(x0 / 100);
             //draw guide box
+            canvas.drawRect(x0 - stripWidth * 1.5f, 0,
+                    x0 - stripWidth * 0.5f, ((3) / 2f) * stripHeight, paint);
+            leftCorner = x0 - stripWidth * 1.5f;
+            topCorner = 1 / 2f * stripHeight;
             for (int i = 0; i < numb_strips; i++) {
                 if (i == numb_strips - 1) {
                     paint.setColor(Color.parseColor("#627cff"));
                     paint.setStrokeWidth(x0 / 200);
                     paint.setTextAlign(Paint.Align.CENTER);
                     paint.setTextSize(16 * getResources().getDisplayMetrics().density);
-                    canvas.drawText("Control", x0 - strip_width * 1.0f,
-                            ((2.0f * i + 2) / 2f) * strip_height - ((paint.descent() + paint.ascent()) / 2), paint);
+                    canvas.drawText("Control", x0 - stripWidth * 1.0f,
+                            ((2.0f * i + 2) / 2f) * stripHeight - ((paint.descent() + paint.ascent()) / 2), paint);
                     paint.setStrokeWidth(x0 / 100);
                 }
-                canvas.drawRect(x0 - strip_width * 1.5f, ((2 * i + 1) / 2f) * strip_height,
-                        x0 - strip_width * 0.5f, ((2 * i + 3) / 2f) * strip_height, paint);
+                canvas.drawRect(leftCorner, topCorner + i * stripHeight,
+                        leftCorner + stripWidth, topCorner + stripHeight * (i + 1), paint);
             }
 
-            mRectArea = (strip_width * strip_width * mScaleFactor);
+            mRectArea = (stripWidth * stripWidth * mScaleFactor);
             Log.d(TAG, "mPosX: " + mPosX);
             Log.d(TAG, "mPosY: " + mPosY);
             Log.d(TAG, "mScaleFactor: " + mScaleFactor);
             Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
             Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
-            Log.d(TAG, "mImageButton.getId(): " + mImageButton.getId());
+            Log.d(TAG, "mAngle: " + mAngle);
 
             ((ViewGroup) mImageButton.getParent()).removeView(mImageButton);
 //            ((ViewGroup)this.getParent()).addView(mImageButton);
@@ -346,6 +366,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
 
         }
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -409,15 +430,21 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         Button rotatePlusButton = findViewById(R.id.rotatePlus);
         Button rotateMinusButton = findViewById(R.id.rotateMinus);
 
-        Box box = new Box(this, sendToResultsButton, rotatePlusButton, rotateMinusButton);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        Box box = new Box(this, sendToResultsButton, rotatePlusButton, rotateMinusButton);
         addContentView(box, params);
 
         sendToResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("", "");
                 Log.d(TAG, "button pressed");
+                // if the aspect ratio of canvas is larger than the aspect ratio of the image
+                // (height/width), then the scaling factor of image pixel to canvas pixel is
+                // constrained by the ratio of the widths. e.g. canvas is 400x200, and the image is
+                // 400x400. Then the scaling is by a factor of 2.
                 imageViewScaleFactor = box.getHeight() / box.getWidth() >
                         viewHeight / viewWidth ?
                         (float) viewWidth / box.getWidth() :
@@ -426,10 +453,57 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 // to the user-enclosed box.
                 resultsPageIntent.putExtra(M_Y_SCALE_FACTOR, box.mRectArea *
                         imageViewScaleFactor * imageViewScaleFactor);
-                Log.d(TAG, "" + box.mRectArea);
-                Log.d(TAG, "" + box.mRectArea *
-                        imageViewScaleFactor * imageViewScaleFactor);
-                startActivity(resultsPageIntent);
+                Log.d(TAG, "imageViewScaleFactor: " + imageViewScaleFactor);
+                Log.d(TAG, "box.mScaleFactor:" + box.mScaleFactor);
+                Log.d(TAG, "box.mRectArea: " + box.mRectArea);
+                Log.d(TAG, "box.mRectArea * imageViewScaleFactor * imageViewScaleFactor: "
+                        + box.mRectArea * imageViewScaleFactor * imageViewScaleFactor);
+                Log.d(TAG, "box.getWidth(): " + box.getWidth());
+                Log.d(TAG, "box.getHeight(): " + box.getHeight());
+                Log.d(TAG, "viewWidth: " + viewWidth);
+                Log.d(TAG, "viewHeight: " + viewHeight);
+
+
+                float xLoc = (box.leftCorner + box.mPosX) * box.mScaleFactor;
+                float yLoc = (box.topCorner + box.mPosY) * box.mScaleFactor;
+
+//                Matrix inverseMatrix = new Matrix();
+//                boolean matrixInvertible = box.getMatrix().invert(inverseMatrix);
+//                if (matrixInvertible){
+//                    float[] srcPoint = new float[] {xLoc, yLoc};
+//                    float[] dstPoint = new float[] {0.0f, 0.0f};
+//                    inverseMatrix.mapPoints(dstPoint, srcPoint);
+//                    box.xLoc = dstPoint[0];
+//                    box.yLoc = dstPoint[1];
+//                    Log.d(TAG, "dstPoint[0]: " + dstPoint[0]);
+//                    Log.d(TAG, "dstPoint[1]: " + dstPoint[1]);
+//                }
+//                else{
+//                    Log.d(TAG, "MATRIX IS NOT INVERTIBLE");
+//                }
+
+                if (box.mAngle != 0) {
+                    // get inititial theta
+                    double theta = Math.toDegrees(Math.atan2(box.getHeight() / 2.0f - xLoc,
+                            yLoc - box.getWidth() / 2.0f));
+                    Log.e(TAG, "THETA: " + theta);
+                    if (theta < 0) {
+                        theta += 360;
+                    }
+                    double d = Math.sqrt((box.getWidth() / 2.0f - xLoc ) *
+                            (box.getWidth() / 2.0f - xLoc) +
+                            (box.getHeight() / 2.0f - yLoc) *
+                                    (box.getHeight() / 2.0f - yLoc));
+
+                    box.xLoc = box.getWidth() / 2.0f + (float) d * (float) Math.cos(Math.toRadians(theta + box.mAngle));
+                    box.yLoc = box.getHeight() / 2.0f - (float) d * (float) Math.sin(Math.toRadians(theta + box.mAngle));
+                }
+                else{
+                    box.xLoc = xLoc;
+                    box.yLoc = yLoc;
+                }
+                box.invalidate();
+                // startActivity(resultsPageIntent);
             }
         });
 
