@@ -284,7 +284,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 mlayoutParamsSet = true;
             }
             paint.setColor(Color.parseColor("#FFFFFF"));
-            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
+//            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
             Log.d(TAG, "xLoc: " + xLoc);
             Log.d(TAG, "yLoc: " + yLoc);
 
@@ -293,8 +293,8 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             canvas.translate(mPosX, mPosY);
             canvas.rotate(-1 * mAngle, getWidth() / 2, getHeight() / 2);
 
-            canvas.drawRect(getWidth() / 2.0f, getHeight() / 2.0f,
-                    getWidth() / 2.0f + 20, getHeight() / 2.0f + 40, paint);
+//            canvas.drawRect(getWidth() / 2.0f, getHeight() / 2.0f,
+//                    getWidth() / 2.0f + 20, getHeight() / 2.0f + 40, paint);
 
 
             //center

@@ -93,7 +93,6 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
 
             mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
 //            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener());
-
         }
 
         @Override

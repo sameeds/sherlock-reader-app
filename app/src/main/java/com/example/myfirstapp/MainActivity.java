@@ -40,34 +40,53 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main);
 
+        radioGroup = (RadioGroup) findViewById(R.id.tubecountgroup);
+        numb_tubes = getCheckedRadioNumber(radioGroup.getCheckedRadioButtonId());
+        ((EditText) findViewById(R.id.numb_)).setText(makeDefaultEditText(numb_tubes));
+
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
 
-        radioGroup = (RadioGroup) findViewById(R.id.tubecountgroup);
         //reference radiogroup ID from layout file
         radioGroup.clearCheck();
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 Log.d("chk", "id" + checkedId);
-                switch (checkedId) {
-                    case R.id.tubecount2:
-                        numb_tubes = 2;
-                        break;
-                    case R.id.tubecount8:
-                        numb_tubes = 8;
-                        break;
-                    case R.id.tubecount12:
-                        numb_tubes = 12;
-                        break;
-                }
+                numb_tubes = getCheckedRadioNumber(checkedId);
+                ((EditText) findViewById(R.id.numb_)).setText(makeDefaultEditText(numb_tubes));
             }
 
         });
 
         RadioButton rb = (RadioButton) findViewById(R.id.tubecount8);
         rb.setChecked(true);
+    }
+
+    private int getCheckedRadioNumber(int checkedId){
+        int tube_count = 0;
+        switch (checkedId) {
+            case R.id.tubecount2:
+                tube_count = 2;
+                break;
+            case R.id.tubecount8:
+                tube_count = 8;
+                break;
+            case R.id.tubecount12:
+                tube_count = 12;
+                break;
+        }
+        return tube_count;
+    }
+
+    private String makeDefaultEditText(int numb_tubes){
+        String str = "sampleName; [";
+        for (int i = 0; i < numb_tubes; i++){
+            str+= " ;";
+        }
+        str += "]";
+        return str;
     }
 
     /**
