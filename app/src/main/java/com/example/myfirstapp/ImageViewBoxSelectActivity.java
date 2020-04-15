@@ -26,7 +26,7 @@ import android.widget.RelativeLayout;
 
 import java.io.File;
 
-import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
+import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
 import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
 import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
@@ -221,7 +221,7 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_view_box_select);
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
-        String photoFilePath = getIntent().getStringExtra(EXTRA_MESSAGE);
+        String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
         Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
         File imageFile = new File(photoFilePath);
         if (!imageFile.exists()) {

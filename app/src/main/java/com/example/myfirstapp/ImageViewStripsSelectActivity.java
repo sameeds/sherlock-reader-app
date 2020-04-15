@@ -26,11 +26,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.example.myfirstapp.ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR;
-import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
+import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
+import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
 import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
-import static com.example.myfirstapp.MainActivity.NUMB_STRIPS;
+import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
 import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
 public class ImageViewStripsSelectActivity extends AppCompatActivity {
@@ -56,9 +58,10 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
     private double exposure_required = 1;
     private float imageViewScaleFactor;
     private Bitmap sourceImage;
-    private int numb_strips;
+    private int numbTubes;
     private int viewHeight;
     private int viewWidth;
+    ArrayList<String> tubeDilutions;
 
     private class Box extends View {
         private Paint paint = new Paint();
@@ -284,7 +287,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 mlayoutParamsSet = true;
             }
             paint.setColor(Color.parseColor("#FFFFFF"));
-//            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
+            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
             Log.d(TAG, "xLoc: " + xLoc);
             Log.d(TAG, "yLoc: " + yLoc);
 
@@ -316,8 +319,8 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                     x0 - stripWidth * 0.5f, ((3) / 2f) * stripHeight, paint);
             leftCorner = x0 - stripWidth * 1.5f;
             topCorner = 1 / 2f * stripHeight;
-            for (int i = 0; i < numb_strips; i++) {
-                if (i == numb_strips - 1) {
+            for (int i = 0; i < numbTubes; i++) {
+                if (i == numbTubes - 1) {
                     paint.setColor(Color.parseColor("#627cff"));
                     paint.setStrokeWidth(x0 / 200);
                     paint.setTextAlign(Paint.Align.CENTER);
@@ -378,8 +381,10 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_image_view_strip_tube_select);
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
-        String photoFilePath = getIntent().getStringExtra(EXTRA_MESSAGE);
-        numb_strips = Integer.parseInt(getIntent().getStringExtra(NUMB_STRIPS));
+        String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
+        numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
+        tubeDilutions = getIntent().getStringArrayListExtra(TUBE_DILUTIONS);
+
         Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
         File imageFile = new File(photoFilePath);
         if (!imageFile.exists()) {
@@ -457,6 +462,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 // to the user-enclosed box.
                 resultsPageIntent.putExtra(M_Y_SCALE_FACTOR, box.mRectArea *
                         imageViewScaleFactor * imageViewScaleFactor);
+                resultsPageIntent.putStringArrayListExtra(TUBE_DILUTIONS, tubeDilutions);
                 Log.d(TAG, "imageViewScaleFactor: " + imageViewScaleFactor);
                 Log.d(TAG, "box.mScaleFactor:" + box.mScaleFactor);
                 Log.d(TAG, "box.mRectArea: " + box.mRectArea);
@@ -513,7 +519,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                     box.yLoc = yLoc;
                 }
                 box.invalidate();
-                // startActivity(resultsPageIntent);
+//                startActivity(resultsPageIntent);
             }
         });
 

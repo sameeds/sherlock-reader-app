@@ -11,16 +11,14 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -32,13 +30,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
+import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
 import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
 public class ResultsPageActivity extends AppCompatActivity {
@@ -53,6 +52,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String imageFilePath = intent.getStringExtra(MainActivity.IMAGE_FILE_NAME);
         float mScaleFactor = intent.getFloatExtra(ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR, 1);
+        ArrayList<String> tubeDilutions = intent.getStringArrayListExtra(TUBE_DILUTIONS);
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView2);
@@ -60,7 +60,7 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         String resultsText = "";
         try {
-            String response = uploadFile(imageFilePath, mScaleFactor);
+            String response = uploadFile(imageFilePath, mScaleFactor, tubeDilutions);
 
 
             ImageView imageView = (ImageView) findViewById(R.id.processedImage);
@@ -92,7 +92,6 @@ public class ResultsPageActivity extends AppCompatActivity {
             p.setColor(Color.BLACK);
             p.setTextSize(40 * getResources().getDisplayMetrics().density);
             p.setStrokeWidth(stroke_width);
-
 
             // Create Temp bitmap
             Bitmap tBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
@@ -228,17 +227,18 @@ public class ResultsPageActivity extends AppCompatActivity {
     }
 
     private void addCallText(Canvas canvas, Paint paint, String text, Integer left, Integer right,
-                            Integer y) {
+                             Integer y) {
         Rect r = new Rect();
         canvas.getClipBounds(r);
         paint.setTextAlign(Paint.Align.LEFT);
         paint.getTextBounds(text, 0, text.length(), r);
         Log.e(TAG, "" + r.width());
-        Integer x = left +  (right - left)/2 - r.width()/2;
+        Integer x = left + (right - left) / 2 - r.width() / 2;
         canvas.drawText(text, x, y, paint);
     }
 
-    public String uploadFile(String imagePath, float mScaleFactor) throws Exception {
+    public String uploadFile(String imagePath, float mScaleFactor, ArrayList<String> tubeDilutions)
+            throws Exception {
         String fileName = imagePath;
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
@@ -254,6 +254,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         FileInputStream fileInputStream = new FileInputStream(sourceFile);
         String requestAddress = "http://34.95.33.102:3001/upload";
         URL url = new URL(requestAddress);
+        Gson gson = new Gson();
 
         // Open a HTTP  connection to  the URL
         conn = (HttpURLConnection) url.openConnection();
@@ -266,6 +267,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
         conn.setRequestProperty("upload", fileName);
         conn.setRequestProperty("mScaleFactor", String.valueOf(mScaleFactor)); // top-left pixel coordinate
+        conn.setRequestProperty("tubeDilutions", gson.toJson(tubeDilutions));
 //        conn.setRequestProperty("tly-pixel", tlypixel);
 //        conn.setRequestProperty("brx-pixel", brxpixel);
 //        conn.setRequestProperty("bry-pixel", brypixel); // bottom right pixel coordinate

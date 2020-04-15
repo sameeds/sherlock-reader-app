@@ -15,8 +15,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-    public static final String NUMB_STRIPS = "com.example.myfirstapp.NUMB_STRIPS";
+    public static final String SAMPLE_NAME = "com.example.myfirstapp.SAMPLE_NAME";
+    public static final String NUMB_TUBES = "com.example.myfirstapp.NUMB_TUBES";
+    public static final String TUBE_DILUTIONS = "com.example.myfirstapp.TUBE_DILUTIONS";
     public static int REQUEST_CODE_PERMISSIONS = 101;
     public static final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA",
             "android.permission.WRITE_EXTERNAL_STORAGE",
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String RESULTS_DIRECTORY = "/results";
     private static final String TAG = "MainActivity";
     private RadioGroup radioGroup;
-    private int numb_tubes;
+    private int numbTubes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         radioGroup = (RadioGroup) findViewById(R.id.tubecountgroup);
-        numb_tubes = getCheckedRadioNumber(radioGroup.getCheckedRadioButtonId());
-        ((EditText) findViewById(R.id.numb_)).setText(makeDefaultEditText(numb_tubes));
+        numbTubes = getCheckedRadioNumber(radioGroup.getCheckedRadioButtonId());
+        ((EditText) findViewById(R.id.numb_)).setText(makeDefaultEditText(numbTubes));
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
@@ -54,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 Log.d("chk", "id" + checkedId);
-                numb_tubes = getCheckedRadioNumber(checkedId);
-                ((EditText) findViewById(R.id.numb_)).setText(makeDefaultEditText(numb_tubes));
+                numbTubes = getCheckedRadioNumber(checkedId);
+                ((EditText) findViewById(R.id.numb_)).setText(makeDefaultEditText(numbTubes));
             }
 
         });
@@ -81,11 +82,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private String makeDefaultEditText(int numb_tubes){
-        String str = "sampleName; [";
-        for (int i = 0; i < numb_tubes; i++){
-            str+= " ;";
-        }
-        str += "]";
+        String str = "sampleName";
+//        str += ";[";
+//        for (int i = 0; i < numb_tubes; i++){
+//            str+= " ;";
+//        }
+//        str += "]";
         return str;
     }
 
@@ -96,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
         EditText editText = (EditText) findViewById(R.id.numb_);
         String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        intent.putExtra(SAMPLE_NAME, message);
         startActivity(intent);
     }
 
@@ -107,15 +109,15 @@ public class MainActivity extends AppCompatActivity {
 //        switch(view.getId()) {
 //            case R.id.tubecount2:
 //                if (checked)
-//                    numb_tubes = 2;
+//                    numbTubes = 2;
 //                break;
 //            case R.id.tubecount8:
 //                if (checked)
-//                    numb_tubes = 8;
+//                    numbTubes = 8;
 //                break;
 //            case R.id.tubecount12:
 //                if (checked)
-//                    numb_tubes = 12;
+//                    numbTubes = 12;
 //                break;
 //        }
 //    }
@@ -124,17 +126,16 @@ public class MainActivity extends AppCompatActivity {
      * Called when the user taps the Take Picture button
      */
     public void activateCamera(View view) {
-//        Intent intent = new Intent(this, CameraActivity.class);
-        Intent intent = new Intent(this, SabetiLaunchCameraAppActivity.class);
-//        Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
+//        Intent intent = new Intent(this, SabetiLaunchCameraAppActivity.class);
+        Intent intent = new Intent(this, FillTubeInfo.class);
 
         // Add the number of tubes indicated by the radio button
-        Log.v(TAG, "numb_tubes: " + numb_tubes);
-        intent.putExtra(NUMB_STRIPS, String.valueOf(numb_tubes));
+        Log.v(TAG, "numbTubes: " + numbTubes);
+        intent.putExtra(NUMB_TUBES, String.valueOf(numbTubes));
 
         EditText editText = (EditText) findViewById(R.id.numb_);
-        String message = editText.getText().toString();
-        intent.putExtra(EXTRA_MESSAGE, message);
+        String sampleName = editText.getText().toString();
+        intent.putExtra(SAMPLE_NAME, sampleName);
         startActivity(intent);
     }
 

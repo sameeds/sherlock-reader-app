@@ -36,11 +36,9 @@ import android.hardware.camera2.params.MeteringRectangle;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -55,7 +53,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
@@ -74,8 +71,7 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
-import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.REQUEST_IMAGE_CAPTURE;
+import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
 
 public class Camera2BasicFragment extends Fragment
         implements View.OnTouchListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -253,7 +249,7 @@ public class Camera2BasicFragment extends Fragment
         public void onImageAvailable(ImageReader reader) {
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
             Intent intent = new Intent(getActivity(), ImageViewBoxSelectActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, mFile.getAbsolutePath());
+            intent.putExtra(SAMPLE_NAME, mFile.getAbsolutePath());
             startActivity(intent);
         }
 

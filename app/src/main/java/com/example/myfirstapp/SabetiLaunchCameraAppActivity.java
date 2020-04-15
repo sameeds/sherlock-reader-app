@@ -23,8 +23,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
-import static com.example.myfirstapp.MainActivity.NUMB_STRIPS;
+import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
+import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
 
 public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
     private ImageView imageView;
@@ -41,8 +41,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract messages
         Intent intent = getIntent();
-        String message = intent.getStringExtra(EXTRA_MESSAGE);
-        numb_tubes = intent.getStringExtra(NUMB_STRIPS);
+        String message = intent.getStringExtra(SAMPLE_NAME);
+        numb_tubes = intent.getStringExtra(NUMB_TUBES);
         if (allPermissionsGranted()) {
             dispatchTakePictureIntent(message);
         } else {
@@ -91,8 +91,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            imageView.setImageBitmap(imageBitmap);
             Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
-            intent.putExtra(EXTRA_MESSAGE, photoFile.getAbsolutePath());
-            intent.putExtra(NUMB_STRIPS, numb_tubes);
+            intent.putExtra(SAMPLE_NAME, photoFile.getAbsolutePath());
+            intent.putExtra(NUMB_TUBES, numb_tubes);
             startActivity(intent);
 //
 //            Log.d("SabetiLaunchCameraAp...", "setting ImageView");
@@ -180,7 +180,7 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 
         if (requestCode == MainActivity.REQUEST_CODE_PERMISSIONS) {
             if (allPermissionsGranted()) {
-                dispatchTakePictureIntent(getIntent().getStringExtra(EXTRA_MESSAGE));
+                dispatchTakePictureIntent(getIntent().getStringExtra(SAMPLE_NAME));
             } else {
                 Toast.makeText(this, "Permissions not granted by the user.", Toast.LENGTH_SHORT).show();
                 finish();

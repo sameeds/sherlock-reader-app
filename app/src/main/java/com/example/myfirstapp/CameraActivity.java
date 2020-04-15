@@ -19,17 +19,12 @@ package com.example.myfirstapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
-import static com.example.myfirstapp.MainActivity.EXTRA_MESSAGE;
+import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
 
 
 public class CameraActivity extends AppCompatActivity {
@@ -45,7 +40,7 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        sampleName = getIntent().getStringExtra(EXTRA_MESSAGE);
+        sampleName = getIntent().getStringExtra(SAMPLE_NAME);
 
         if (null == savedInstanceState) {
             getSupportFragmentManager().beginTransaction()
