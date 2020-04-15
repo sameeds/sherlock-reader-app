@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static com.example.myfirstapp.ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR;
@@ -61,7 +62,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
     private int numbTubes;
     private int viewHeight;
     private int viewWidth;
-    ArrayList<String> tubeDilutions;
+    private ArrayList<String> tubeDilutions;
 
     private class Box extends View {
         private Paint paint = new Paint();
@@ -97,6 +98,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
         private float topCorner;
         private float stripHeight;
         private float stripWidth;
+        private ArrayList<float[]> tubeLines;
 
 
         Box(Context context, ImageButton imageButton, Button rotatePlusButton,
@@ -111,6 +113,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(Color.parseColor("#FF8362"));
+            tubeLines = new ArrayList<>();
 //            mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener());
 
         }
@@ -294,7 +297,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             canvas.save();
             canvas.scale(mScaleFactor, mScaleFactor);
             canvas.translate(mPosX, mPosY);
-            canvas.rotate(-1 * mAngle, getWidth() / 2, getHeight() / 2);
+//            canvas.rotate(-1 * mAngle, getWidth() / 2, getHeight() / 2);
 
 //            canvas.drawRect(getWidth() / 2.0f, getHeight() / 2.0f,
 //                    getWidth() / 2.0f + 20, getHeight() / 2.0f + 40, paint);
@@ -314,24 +317,46 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
             stripHeight = y0 / (total_height_strips + 2);
             stripWidth = strip_ratio * stripHeight;
 
-            //draw guide box
-            canvas.drawRect(x0 - stripWidth * 1.5f, 0,
-                    x0 - stripWidth * 0.5f, ((3) / 2f) * stripHeight, paint);
+//            //draw guide box
+//            canvas.drawRect(x0 - stripWidth * 1.5f, 0,
+//                    x0 - stripWidth * 0.5f, ((3) / 2f) * stripHeight, paint);
             leftCorner = x0 - stripWidth * 1.5f;
             topCorner = 1 / 2f * stripHeight;
+            float diffWidthY = (float) (stripWidth * Math.sin(Math.toRadians(mAngle)));
+            float diffWidthX = (float) (stripWidth * Math.cos(Math.toRadians(mAngle)));
+            float diffHeightY = (float) (stripHeight * Math.cos(Math.toRadians(mAngle)));
+            float diffHeightX = (float) (stripHeight * Math.sin(Math.toRadians(mAngle)));
+            float currTopLeftX = leftCorner;
+            float currTopLeftY = topCorner;
+            tubeLines = new ArrayList<>();
             for (int i = 0; i < numbTubes; i++) {
                 if (i == numbTubes - 1) {
                     paint.setColor(Color.parseColor("#627cff"));
-                    paint.setStrokeWidth(x0 / 200);
-                    paint.setTextAlign(Paint.Align.CENTER);
-                    paint.setTextSize(16 * getResources().getDisplayMetrics().density);
-                    canvas.drawText("Control", x0 - stripWidth * 1.0f,
-                            ((2.0f * i + 2) / 2f) * stripHeight - ((paint.descent() + paint.ascent()) / 2), paint);
+//                    paint.setStrokeWidth(x0 / 200);
+//                    paint.setTextAlign(Paint.Align.CENTER);
+//                    paint.setTextSize(16 * getResources().getDisplayMetrics().density);
+//                    canvas.drawText("Control", x0 - stripWidth * 1.0f,
+//                            ((2.0f * i + 2) / 2f) * stripHeight - ((paint.descent() + paint.ascent()) / 2), paint);
                     paint.setStrokeWidth(x0 / 100);
                 }
-                canvas.drawRect(leftCorner, topCorner + i * stripHeight,
-                        leftCorner + stripWidth, topCorner + stripHeight * (i + 1), paint);
+                canvas.drawLine(currTopLeftX, currTopLeftY, currTopLeftX + diffWidthX,
+                        currTopLeftY - diffWidthY, paint);
+                canvas.drawLine(currTopLeftX + diffWidthX, currTopLeftY - diffWidthY,
+                        currTopLeftX + diffWidthX + diffHeightX,
+                        currTopLeftY - diffWidthY + diffHeightY, paint);
+                canvas.drawLine(currTopLeftX + diffWidthX + diffHeightX,
+                        currTopLeftY - diffWidthY + diffHeightY,
+                        currTopLeftX + diffHeightX,
+                        currTopLeftY + diffHeightY, paint);
+                canvas.drawLine(currTopLeftX + diffHeightX, currTopLeftY + diffHeightY,
+                        currTopLeftX, currTopLeftY, paint);
+                tubeLines.add(new float[]{currTopLeftX, currTopLeftY,
+                        currTopLeftX + diffWidthX, currTopLeftY - diffWidthY});
+                currTopLeftX = currTopLeftX + diffHeightX;
+                currTopLeftY = currTopLeftY + diffHeightY;
             }
+            tubeLines.add(new float[]{currTopLeftX, currTopLeftY,
+                    currTopLeftX + diffWidthX, currTopLeftY - diffWidthY});
 
             mRectArea = (stripWidth * stripWidth * mScaleFactor);
             Log.d(TAG, "mPosX: " + mPosX);
@@ -474,50 +499,8 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 Log.d(TAG, "viewHeight: " + viewHeight);
 
 
-                float xLoc = (box.leftCorner + box.mPosX) * box.mScaleFactor;
-                float yLoc = (box.topCorner + box.mPosY) * box.mScaleFactor;
-
-//                Matrix inverseMatrix = new Matrix();
-//                boolean matrixInvertible = box.getMatrix().invert(inverseMatrix);
-//                if (matrixInvertible){
-//                    float[] srcPoint = new float[] {xLoc, yLoc};
-//                    float[] dstPoint = new float[] {0.0f, 0.0f};
-//                    inverseMatrix.mapPoints(dstPoint, srcPoint);
-//                    box.xLoc = dstPoint[0];
-//                    box.yLoc = dstPoint[1];
-//                    Log.d(TAG, "dstPoint[0]: " + dstPoint[0]);
-//                    Log.d(TAG, "dstPoint[1]: " + dstPoint[1]);
-//                }
-//                else{
-//                    Log.d(TAG, "MATRIX IS NOT INVERTIBLE");
-//                }
-
-                if (box.mAngle != 0) {
-                    // get inititial theta
-                    double theta = Math.toDegrees(Math.atan2(box.getHeight() / 2.0f - xLoc,
-                            yLoc - box.getWidth() / 2.0f));
-                    Log.e(TAG, "THETA: " + theta);
-                    if (theta < 0) {
-                        theta += 360;
-                    }
-                    float xLoc_centered = (xLoc - box.getWidth() / 2.0f);
-                    float yLoc_centered = (box.getHeight() / 2.0f - yLoc);
-                    double d = Math.sqrt(xLoc_centered * xLoc_centered +
-                            yLoc_centered * yLoc_centered);
-
-                    float nX = (float) xLoc_centered * (float) Math.cos(Math.toRadians(box.mAngle)) -
-                            (float) yLoc_centered * (float) Math.sin(Math.toRadians(box.mAngle));
-                    float nY = (float) xLoc_centered * (float) Math.sin(Math.toRadians(box.mAngle)) +
-                            (float) yLoc_centered * (float) Math.cos(Math.toRadians(box.mAngle));
-                    box.xLoc = box.getWidth() / 2.0f + nX;
-                    box.yLoc = box.getHeight() / 2.0f - nY;
-
-//                    box.xLoc = box.getWidth() / 2.0f + (float) d * (float) Math.cos(Math.toRadians(theta + box.mAngle));
-//                    box.yLoc = box.getHeight() / 2.0f - (float) d * (float) Math.sin(Math.toRadians(theta + box.mAngle));
-                } else {
-                    box.xLoc = xLoc;
-                    box.yLoc = yLoc;
-                }
+                box.xLoc = (box.tubeLines.get(1)[0] + box.mPosX) * box.mScaleFactor;
+                box.yLoc = (box.tubeLines.get(1)[1] + box.mPosY) * box.mScaleFactor;
                 box.invalidate();
 //                startActivity(resultsPageIntent);
             }
