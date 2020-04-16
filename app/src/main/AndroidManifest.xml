@@ -30,7 +30,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".SelectControlStripActivity" />
         <activity android:name=".ViewPreviousTestsActivity" />
-        <activity android:name=".ImageViewStripsSelectActivity" />
+        <activity android:name=".ImageViewTubesSelectActivity" />
         <activity
             android:name=".ResultsPageActivity"
             android:parentActivityName=".MainActivity" />

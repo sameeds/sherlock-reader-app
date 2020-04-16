@@ -37,7 +37,7 @@ import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
 import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
 import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
-public class ImageViewStripsSelectActivity extends AppCompatActivity {
+public class ImageViewTubesSelectActivity extends AppCompatActivity {
 
     public static int REQUEST_CODE_PERMISSIONS = 101;
     public static final String[] REQUIRED_PERMISSIONS = new String[]{"android.permission.CAMERA",
@@ -487,6 +487,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 // to the user-enclosed box.
                 resultsPageIntent.putExtra(M_Y_SCALE_FACTOR, box.mRectArea *
                         imageViewScaleFactor * imageViewScaleFactor);
+                resultsPageIntent.putExtra(NUMB_TUBES, Integer.toString(numbTubes));
                 resultsPageIntent.putStringArrayListExtra(TUBE_DILUTIONS, tubeDilutions);
                 Log.d(TAG, "imageViewScaleFactor: " + imageViewScaleFactor);
                 Log.d(TAG, "box.mScaleFactor:" + box.mScaleFactor);

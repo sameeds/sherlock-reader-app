@@ -117,7 +117,7 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
+            Intent intent = new Intent(this, ImageViewTubesSelectActivity.class);
             intent.putExtra(SAMPLE_NAME, photoFile.getAbsolutePath());
             intent.putExtra(NUMB_TUBES, numb_tubes);
             intent.putStringArrayListExtra(TUBE_DILUTIONS, dilutions);

@@ -37,11 +37,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
 import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
 import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
 public class ResultsPageActivity extends AppCompatActivity {
     static final String TAG = "ResultsPageActivity";
+    private String imageFilePath;
+    private float mScaleFactor;
+    private ArrayList<String> tubeDilutions;
+    private int numbTubes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +55,10 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
-        String imageFilePath = intent.getStringExtra(MainActivity.IMAGE_FILE_NAME);
-        float mScaleFactor = intent.getFloatExtra(ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR, 1);
-        ArrayList<String> tubeDilutions = intent.getStringArrayListExtra(TUBE_DILUTIONS);
+        imageFilePath = intent.getStringExtra(MainActivity.IMAGE_FILE_NAME);
+        mScaleFactor = intent.getFloatExtra(ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR, 1);
+        tubeDilutions = intent.getStringArrayListExtra(TUBE_DILUTIONS);
+        numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView2);
@@ -60,7 +66,7 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         String resultsText = "";
         try {
-            String response = uploadFile(imageFilePath, mScaleFactor, tubeDilutions);
+            String response = uploadFile();
 
 
             ImageView imageView = (ImageView) findViewById(R.id.processedImage);
@@ -237,9 +243,9 @@ public class ResultsPageActivity extends AppCompatActivity {
         canvas.drawText(text, x, y, paint);
     }
 
-    public String uploadFile(String imagePath, float mScaleFactor, ArrayList<String> tubeDilutions)
+    public String uploadFile()
             throws Exception {
-        String fileName = imagePath;
+        String fileName = imageFilePath;
         HttpURLConnection conn = null;
         DataOutputStream dos = null;
         String lineEnd = "\r\n";
@@ -248,7 +254,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         int bytesRead, bytesAvailable, bufferSize;
         byte[] buffer;
         int maxBufferSize = 1 * 1024 * 1024;
-        File sourceFile = new File(imagePath);
+        File sourceFile = new File(imageFilePath);
 
         // open a URL connection to the Servlet
         FileInputStream fileInputStream = new FileInputStream(sourceFile);
@@ -269,6 +275,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         conn.setRequestProperty("upload", fileName);
         conn.setRequestProperty("mScaleFactor", String.valueOf(mScaleFactor)); // top-left pixel coordinate
         conn.setRequestProperty("tubeDilutions", gson.toJson(tubeDilutions));
+        conn.setRequestProperty("numbTubes", String.valueOf(numbTubes));
 //        conn.setRequestProperty("tly-pixel", tlypixel);
 //        conn.setRequestProperty("brx-pixel", brxpixel);
 //        conn.setRequestProperty("bry-pixel", brypixel); // bottom right pixel coordinate
