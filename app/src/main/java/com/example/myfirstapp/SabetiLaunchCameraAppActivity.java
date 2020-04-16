@@ -8,7 +8,11 @@ import androidx.core.content.FileProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,20 +22,23 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
 import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
 import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
+import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
 
 public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
     private ImageView imageView;
     File photoFile = null;
     String numb_tubes;
     private Boolean cameraAccessed = false;
-
+    private ArrayList<String> dilutions;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +50,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String message = intent.getStringExtra(SAMPLE_NAME);
         numb_tubes = intent.getStringExtra(NUMB_TUBES);
+        dilutions = intent.getStringArrayListExtra(TUBE_DILUTIONS);
+
         if (allPermissionsGranted()) {
             dispatchTakePictureIntent(message);
         } else {
@@ -77,6 +86,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
                         "com.example.myfirstapp.provider",
                         photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                takePictureIntent.putExtra(MediaStore.EXTRA_SCREEN_ORIENTATION,
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
@@ -87,12 +98,29 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            imageView.setImageBitmap(imageBitmap);
+            Bitmap sourceImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
+            Matrix rotationMatrix = new Matrix();
+            rotationMatrix.postRotate(getCameraPhotoOrientation(this,
+                    FileProvider.getUriForFile(this,
+                            "com.example.myfirstapp.provider",
+                            new File(photoFile.getAbsolutePath())),
+                    photoFile.getAbsolutePath()));
+            Bitmap b = Bitmap.createBitmap(sourceImage, 0, 0,
+                    sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true);
+            if (photoFile.exists ()) photoFile.delete ();
+            try {
+                FileOutputStream out = new FileOutputStream(photoFile);
+                b.compress(Bitmap.CompressFormat.JPEG, 90, out);
+                out.flush();
+                out.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
             intent.putExtra(SAMPLE_NAME, photoFile.getAbsolutePath());
             intent.putExtra(NUMB_TUBES, numb_tubes);
+            intent.putStringArrayListExtra(TUBE_DILUTIONS, dilutions);
             startActivity(intent);
 //
 //            Log.d("SabetiLaunchCameraAp...", "setting ImageView");
@@ -115,8 +143,7 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 ////                        photoFile.getAbsolutePath()));
 //            }
 
-        }
-        else{
+        } else {
             startActivity(new Intent(this, MainActivity.class));
         }
     }
@@ -134,16 +161,30 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
                     ExifInterface.TAG_ORIENTATION,
                     ExifInterface.ORIENTATION_NORMAL);
 
-            switch (orientation) {
-                case ExifInterface.ORIENTATION_ROTATE_270:
-                    rotate = 270;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_180:
-                    rotate = 180;
-                    break;
-                case ExifInterface.ORIENTATION_ROTATE_90:
-                    rotate = 90;
-                    break;
+            boolean forcePortraitMode = true;
+            if (forcePortraitMode) {
+                switch (orientation) { // this switch forces portrait mode.
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        rotate = 270;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                    case ExifInterface.ORIENTATION_NORMAL:
+                        rotate = 90;
+                        break;
+                }
+            } else { // use default orientations of captured picture
+                switch (orientation) {
+                    case ExifInterface.ORIENTATION_ROTATE_270:
+                        rotate = 270;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_180:
+                        rotate = 180;
+                        break;
+                    case ExifInterface.ORIENTATION_ROTATE_90:
+                        rotate = 90;
+                        break;
+                }
             }
 
             Log.i("RotateImage", "Exif orientation: " + orientation);

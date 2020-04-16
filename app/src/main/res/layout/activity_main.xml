@@ -8,30 +8,17 @@
     tools:context=".MainActivity">
 
     <EditText
-        android:id="@+id/numb_"
+        android:id="@+id/sample_name"
         android:layout_width="242dp"
         android:layout_height="35dp"
-        android:layout_marginStart="22dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="68dp"
         android:background="@drawable/edittext_bg"
         android:ems="10"
         android:hint="@string/edit_message"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/view_previous_tests"
         app:layout_constraintEnd_toStartOf="@+id/activateCamera"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/activateCamera"
-        android:layout_width="119dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="activateCamera"
-        android:text="@string/activate_camera"
-        app:layout_constraintBaseline_toBaselineOf="@+id/numb_"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/numb_" />
+        app:layout_constraintStart_toStartOf="@+id/view_previous_tests" />
 
     <Button
         android:id="@+id/view_previous_tests"
@@ -50,41 +37,58 @@
         android:id="@+id/tubecountgroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="124dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/activateCamera"
-        app:layout_constraintStart_toStartOf="@+id/activateCamera">
+        android:orientation="horizontal"
+        android:paddingRight="15dp"
+        app:layout_constraintBottom_toTopOf="@+id/view_previous_tests"
+        app:layout_constraintStart_toStartOf="@+id/sample_name"
+        app:layout_constraintTop_toBottomOf="@+id/sample_name">
+
 
         <RadioButton
-            android:id="@+id/tubecount12"
+            android:id="@+id/testTubes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="12 tubes"
+            android:buttonTint="@color/colorAccent"
+            android:paddingRight="10dp"
+            android:text="Test"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:buttonTint="@color/colorAccent"/>
+            android:textStyle="bold" />
 
         <RadioButton
-            android:id="@+id/tubecount8"
+            android:id="@+id/trainTubes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:buttonTint="@color/colorAccent"
             android:checked="true"
-            android:text="8 tubes"
+            android:text="Train"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:buttonTint="@color/colorAccent"/>
-
-
-        <RadioButton
-            android:id="@+id/tubecount2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2 tubes"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:buttonTint="@color/colorAccent"/>
-
+            android:textStyle="bold" />
 
     </RadioGroup>
+
+    <EditText
+        android:id="@+id/tubeCount"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edittext_bg"
+        android:ems="10"
+        android:hint="@string/tube_count"
+        android:inputType="number"
+        android:paddingLeft="5dp"
+        app:layout_constraintEnd_toEndOf="@+id/sample_name"
+        app:layout_constraintStart_toEndOf="@+id/tubecountgroup"
+        app:layout_constraintTop_toTopOf="@+id/tubecountgroup" />
+
+    <Button
+        android:id="@+id/activateCamera"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="activateCamera"
+        android:text="@string/activate_camera"
+        app:layout_constraintBaseline_toBaselineOf="@+id/tubeCount"
+        app:layout_constraintEnd_toEndOf="@+id/view_previous_tests"
+        app:layout_constraintStart_toEndOf="@+id/tubeCount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -93,7 +93,7 @@ public class FillTubeInfo extends AppCompatActivity {
         Log.v(TAG, "numbTubes: " + numbTubes);
         intent.putExtra(NUMB_TUBES, String.valueOf(numbTubes));
 
-        EditText editText = (EditText) findViewById(R.id.numb_);
+        EditText editText = (EditText) findViewById(R.id.sample_name);
         String sampleName = editText.getText().toString();
         intent.putExtra(SAMPLE_NAME, sampleName);
         startActivity(intent);

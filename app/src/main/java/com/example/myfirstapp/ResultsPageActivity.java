@@ -255,6 +255,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         String requestAddress = "http://34.95.33.102:3001/upload";
         URL url = new URL(requestAddress);
         Gson gson = new Gson();
+        Log.d(TAG, gson.toJson(tubeDilutions));
 
         // Open a HTTP  connection to  the URL
         conn = (HttpURLConnection) url.openConnection();

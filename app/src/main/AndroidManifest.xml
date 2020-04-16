@@ -24,7 +24,10 @@
         android:usesCleartextTraffic="true">
         <activity android:name=".FillTubeInfo"></activity>
         <activity android:name=".ImageViewBoxSelectActivity" />
-        <activity android:name=".SabetiLaunchCameraAppActivity" />
+        <activity
+            android:name=".SabetiLaunchCameraAppActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
         <activity android:name=".SelectControlStripActivity" />
         <activity android:name=".ViewPreviousTestsActivity" />
         <activity android:name=".ImageViewStripsSelectActivity" />

@@ -26,6 +26,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
@@ -290,7 +291,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 mlayoutParamsSet = true;
             }
             paint.setColor(Color.parseColor("#FFFFFF"));
-            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
+//            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
             Log.d(TAG, "xLoc: " + xLoc);
             Log.d(TAG, "yLoc: " + yLoc);
 
@@ -393,7 +394,6 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 ((ViewGroup) mOuterContainerLayout3.getParent()).removeView(mOuterContainerLayout3);
             }
             addContentView(mOuterContainerLayout3, mInnerContainerLayoutParams3);
-
             canvas.restore();
 
         }
@@ -419,16 +419,16 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 16;
         sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-//        imageView.setImageBitmap(sourceImage);
-        Matrix rotationMatrix = new Matrix();
         imageView.setImageURI(Uri.fromFile(imageFile));
-        rotationMatrix.postRotate(getCameraPhotoOrientation(this,
-                FileProvider.getUriForFile(this,
-                        "com.example.myfirstapp.provider",
-                        new File(photoFilePath)),
-                photoFilePath));
-        imageView.setImageBitmap(Bitmap.createBitmap(sourceImage, 0, 0,
-                sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true));
+        Matrix rotationMatrix = new Matrix();
+//        rotationMatrix.postRotate(getCameraPhotoOrientation(this,
+//                FileProvider.getUriForFile(this,
+//                        "com.example.myfirstapp.provider",
+//                        new File(photoFilePath)),
+//                photoFilePath));
+//        Bitmap b = Bitmap.createBitmap(sourceImage, 0, 0,
+//                sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true);
+//        imageView.setImageBitmap(b);
 
         imageView = findViewById(R.id.capturedImage);
         imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -502,7 +502,7 @@ public class ImageViewStripsSelectActivity extends AppCompatActivity {
                 box.xLoc = (box.tubeLines.get(1)[0] + box.mPosX) * box.mScaleFactor;
                 box.yLoc = (box.tubeLines.get(1)[1] + box.mPosY) * box.mScaleFactor;
                 box.invalidate();
-//                startActivity(resultsPageIntent);
+                startActivity(resultsPageIntent);
             }
         });
 
