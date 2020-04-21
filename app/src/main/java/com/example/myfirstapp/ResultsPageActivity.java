@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static com.example.myfirstapp.ImageViewTubesSelectActivity.TUBE_COORDS;
 import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
 import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
 import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
@@ -47,6 +48,7 @@ public class ResultsPageActivity extends AppCompatActivity {
     private float mScaleFactor;
     private ArrayList<String> tubeDilutions;
     private int numbTubes;
+    private String tubeCoords;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,8 @@ public class ResultsPageActivity extends AppCompatActivity {
         mScaleFactor = intent.getFloatExtra(ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR, 1);
         tubeDilutions = intent.getStringArrayListExtra(TUBE_DILUTIONS);
         numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
+        tubeCoords = intent.getStringExtra(TUBE_COORDS);
+
 
         // Capture the layout's TextView and set the string as its text
         TextView textView = findViewById(R.id.textView2);
@@ -112,87 +116,6 @@ public class ResultsPageActivity extends AppCompatActivity {
             if (response.charAt(0) != '[') {
                 textView.setText(response);
             } else {
-                // The results string has the following format:
-                // [{(x1,y1):(x2,y2):(x3,y3):(x4,y4);(x1,y1):(x2,y2):(x3,y3):(x4,y4)}
-                //      <results>POSITIVE,CONTROL]
-                // where the coordnates are bottom left, top left, top right, and bottom right
-                // coordinates of each strip.
-                String full_response = response.substring(1, response.length() - 1);
-                String results_cue = "<results>";
-                String signal_response = full_response.substring(full_response.indexOf(results_cue)
-                        + results_cue.length(), full_response.length() - 1);
-                ArrayList<String> results = new ArrayList<>(Arrays.asList(
-                        signal_response.split(",")));
-                String strips_info = full_response.substring(1,
-                        full_response.indexOf(results_cue) - 1);
-                Log.d(TAG, strips_info);
-                ArrayList<String> strip_positions = new ArrayList<>(Arrays.asList(
-                        strips_info.split(";")));
-                // strip_positions should look like
-                // (x1,y1):(x2,y2):(x3,y3):(x4,y4)
-                if (true) {
-                    for (int i = 0; i < results.size(); i++) {
-                        ArrayList<String> corners = new ArrayList<>(Arrays.asList(
-                                strip_positions.get(i).split(":")));
-                        Log.d(TAG, corners.toString());
-                        Integer bl_x = Integer.parseInt(corners.get(0).substring(1,
-                                corners.get(0).indexOf(",")));
-                        Integer bl_y = Integer.parseInt(corners.get(0).substring(corners.get(0).indexOf(",")
-                                + 1, corners.get(0).length() - 1));
-                        Log.d(TAG, "bl");
-                        Log.d(TAG, corners.get(0));
-                        Log.d(TAG, bl_y.toString());
-
-                        Integer tl_x = Integer.parseInt(corners.get(1).substring(1,
-                                corners.get(1).indexOf(",")));
-                        Integer tl_y = Integer.parseInt(corners.get(1).substring(corners.get(1).indexOf(",")
-                                + 1, corners.get(1).length() - 1));
-                        Log.d(TAG, "tl");
-                        Log.d(TAG, tl_x.toString());
-                        Log.d(TAG, tl_y.toString());
-
-                        Integer tr_x = Integer.parseInt(corners.get(2).substring(1,
-                                corners.get(2).indexOf(",")));
-                        Integer tr_y = Integer.parseInt(corners.get(2).substring(corners.get(2).indexOf(",")
-                                + 1, corners.get(2).length() - 1));
-                        Log.d(TAG, "tr");
-                        Log.d(TAG, tr_x.toString());
-                        Log.d(TAG, tr_y.toString());
-
-                        Integer br_x = Integer.parseInt(corners.get(3).substring(1,
-                                corners.get(3).indexOf(",")));
-                        Integer br_y = Integer.parseInt(corners.get(3).substring(corners.get(3).indexOf(",")
-                                + 1, corners.get(3).length() - 1));
-                        Log.d(TAG, "br");
-                        Log.d(TAG, br_x.toString());
-                        Log.d(TAG, br_y.toString());
-//            canvas.drawText("Ctrl", x0 - strip_width * 2, (y0 - strip_height) / 2 - (y0 - strip_height) / 20, paint);
-                        Integer strip_height = tl_y - bl_y;
-                        if ("POSITIVE".equals(results.get(i))) {
-                            p.setColor(Color.RED);
-                            addCallText(tCanvas, p, "+", tl_x, tr_x,
-                                    tl_y + strip_height / 20);
-                        } else if ("NEGATIVE".equals(results.get(i))) {
-                            p.setColor(Color.BLUE);
-                            addCallText(tCanvas, p, "-", tl_x, tr_x,
-                                    tl_y + strip_height / 20);
-                        } else {
-                            p.setColor(Color.BLUE);
-                            addCallText(tCanvas, p, "C", tl_x, tr_x,
-                                    tl_y + strip_height / 20);
-                        }
-
-                        tCanvas.drawLine(bl_x, bl_y, tl_x, tl_y, p);
-                        tCanvas.drawLine(bl_x - stroke_width / 2, bl_y,
-                                br_x + stroke_width / 2, br_y, p);
-                        tCanvas.drawLine(tr_x, tr_y, br_x, br_y, p);
-                        tCanvas.drawLine(tr_x + stroke_width / 2, tr_y,
-                                tl_x - stroke_width / 2, tl_y, p);
-                    }
-                }
-
-                imageView.setImageDrawable(new BitmapDrawable(getResources(), tBitmap));
-
 
                 // write to page:
 //                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -209,18 +132,19 @@ public class ResultsPageActivity extends AppCompatActivity {
 //                    textView.setText(Html.fromHtml(htmlText));
 //                }
 
-                // Create string to save
-                StringBuilder resultsTextBuilder = new StringBuilder();
-                for (int i = 0; i < results.size(); i++) {
-                    if (results.get(i).contains("POSITIVE")) {
-                        resultsTextBuilder.append("+,");
-                    } else if (results.get(i).contains("NEGATIVE")) {
-                        resultsTextBuilder.append("-,");
-                    } else if (results.get(i).contains("CONTROL")) {
-                        resultsTextBuilder.append("C");
-                    }
-                }
-                resultsText = resultsTextBuilder.toString();
+
+//                // Create string to save
+//                StringBuilder resultsTextBuilder = new StringBuilder();
+//                for (int i = 0; i < results.size(); i++) {
+//                    if (results.get(i).contains("POSITIVE")) {
+//                        resultsTextBuilder.append("+,");
+//                    } else if (results.get(i).contains("NEGATIVE")) {
+//                        resultsTextBuilder.append("-,");
+//                    } else if (results.get(i).contains("CONTROL")) {
+//                        resultsTextBuilder.append("C");
+//                    }
+//                }
+//                resultsText = resultsTextBuilder.toString();
             }
             Log.d(TAG, resultsText);
             saveResultsFile(imageFilePath, resultsText);
@@ -258,7 +182,7 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         // open a URL connection to the Servlet
         FileInputStream fileInputStream = new FileInputStream(sourceFile);
-        String requestAddress = "http://34.95.33.102:3001/upload";
+        String requestAddress = "http://34.95.33.102:3002/upload";
         URL url = new URL(requestAddress);
         Gson gson = new Gson();
         Log.d(TAG, gson.toJson(tubeDilutions));
@@ -276,6 +200,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         conn.setRequestProperty("mScaleFactor", String.valueOf(mScaleFactor)); // top-left pixel coordinate
         conn.setRequestProperty("tubeDilutions", gson.toJson(tubeDilutions));
         conn.setRequestProperty("numbTubes", String.valueOf(numbTubes));
+        conn.setRequestProperty("tubeCoords", tubeCoords);
 //        conn.setRequestProperty("tly-pixel", tlypixel);
 //        conn.setRequestProperty("brx-pixel", brxpixel);
 //        conn.setRequestProperty("bry-pixel", brypixel); // bottom right pixel coordinate

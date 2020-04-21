@@ -23,11 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
+
+import com.google.gson.Gson;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static com.example.myfirstapp.ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR;
@@ -35,7 +34,6 @@ import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
 import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
 import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
 import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
-import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
 public class ImageViewTubesSelectActivity extends AppCompatActivity {
 
@@ -48,6 +46,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             "android.permission.ACCESS_WIFI_STATE"};
     ImageView imageView;
     LinearLayout mlinearLayout;
+    public static final String TUBE_COORDS = "tubeCoords";
     public static final String CAMERA_DATE_FORMAT = "yyyyMMdd_HHmmss";
     public static final String RESULTS_DIRECTORY = "/results";
     private static final String TAG = "ImageViewBoxSelectAct";
@@ -61,8 +60,9 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
     private float imageViewScaleFactor;
     private Bitmap sourceImage;
     private int numbTubes;
-    private int viewHeight;
-    private int viewWidth;
+    private int imageHeightPx;
+    private int imageWidthPx;
+    private Gson gson;
     private ArrayList<String> tubeDilutions;
 
     private class Box extends View {
@@ -329,7 +329,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             float diffHeightX = (float) (stripHeight * Math.sin(Math.toRadians(mAngle)));
             float currTopLeftX = leftCorner;
             float currTopLeftY = topCorner;
-            tubeLines = new ArrayList<>();
+            tubeLines = new ArrayList<>(); // each tuple represents a line.
             for (int i = 0; i < numbTubes; i++) {
                 if (i == numbTubes - 1) {
                     paint.setColor(Color.parseColor("#627cff"));
@@ -400,6 +400,26 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
     }
 
 
+    // Change the coordinate basis of the tube lines to be relative to the image instead of
+    // relative to the view.
+    // NOTE: THIS ONLY WORKS IF THE IMAGE IS IN PORTRAIT MODE (which it should be!)
+    private ArrayList<float[]> convertBoxPxToImagePx(Box box) {
+        ArrayList<float[]> tubeLines = box.tubeLines;
+        ArrayList<float[]> convertedTubeLines = new ArrayList<>();
+        // the number of screen pixels above where the image starts.
+        float yBuffer = (box.getHeight() - imageHeightPx / imageViewScaleFactor) / 2;
+        for (float[] line : tubeLines) {
+            // tuple is: {x1, y1, x2, y2}
+            float[] convertedLine = new float[]{(line[0] + box.mPosX) * box.mScaleFactor * imageViewScaleFactor,
+                    ((line[1] + box.mPosY) * box.mScaleFactor - yBuffer) * imageViewScaleFactor,
+                    (line[2] + box.mPosX) * box.mScaleFactor * imageViewScaleFactor,
+                    ((line[3] + box.mPosY) * box.mScaleFactor - yBuffer) * imageViewScaleFactor};
+            Log.d(TAG, gson.toJson(convertedLine));
+            convertedTubeLines.add(convertedLine);
+        }
+        return convertedTubeLines;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -409,6 +429,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
         numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
         tubeDilutions = getIntent().getStringArrayListExtra(TUBE_DILUTIONS);
+        gson = new Gson();
 
         Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
         File imageFile = new File(photoFilePath);
@@ -432,11 +453,11 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
 
         imageView = findViewById(R.id.capturedImage);
         imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        viewWidth = imageView.getMeasuredWidth(); // this is the image width
-        viewHeight = imageView.getMeasuredHeight(); // this is the image height
+        imageWidthPx = imageView.getMeasuredWidth(); // this is the image width
+        imageHeightPx = imageView.getMeasuredHeight(); // this is the image height
 
-        Log.d(TAG, "viewWidth: " + viewWidth);
-        Log.d(TAG, "viewHeight: " + viewHeight);
+        Log.d(TAG, "imageWidthPx: " + imageWidthPx);
+        Log.d(TAG, "imageHeightPx: " + imageHeightPx);
 
 
         addBox(photoFilePath);
@@ -479,16 +500,19 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
                 // (height/width), then the scaling factor of image pixel to canvas pixel is
                 // constrained by the ratio of the widths. e.g. canvas is 400x200, and the image is
                 // 400x400. Then the scaling is by a factor of 2.
-                imageViewScaleFactor = box.getHeight() / box.getWidth() >
-                        viewHeight / viewWidth ?
-                        (float) viewWidth / box.getWidth() :
-                        (float) viewHeight / box.getHeight();
+//                imageViewScaleFactor = box.getHeight() / box.getWidth() >
+//                        imageHeightPx / imageWidthPx ?
+//                        (float) imageWidthPx / box.getWidth() :
+//                        (float) imageHeightPx / box.getHeight();
+                imageViewScaleFactor = (float) imageWidthPx / box.getWidth();
                 // M_Y_SCALE_FACTOR is the total number of pixels in the jpg file that correspond
                 // to the user-enclosed box.
                 resultsPageIntent.putExtra(M_Y_SCALE_FACTOR, box.mRectArea *
                         imageViewScaleFactor * imageViewScaleFactor);
                 resultsPageIntent.putExtra(NUMB_TUBES, Integer.toString(numbTubes));
                 resultsPageIntent.putStringArrayListExtra(TUBE_DILUTIONS, tubeDilutions);
+
+                resultsPageIntent.putExtra(TUBE_COORDS, gson.toJson(convertBoxPxToImagePx(box)));
                 Log.d(TAG, "imageViewScaleFactor: " + imageViewScaleFactor);
                 Log.d(TAG, "box.mScaleFactor:" + box.mScaleFactor);
                 Log.d(TAG, "box.mRectArea: " + box.mRectArea);
@@ -496,8 +520,8 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
                         + box.mRectArea * imageViewScaleFactor * imageViewScaleFactor);
                 Log.d(TAG, "box.getWidth(): " + box.getWidth());
                 Log.d(TAG, "box.getHeight(): " + box.getHeight());
-                Log.d(TAG, "viewWidth: " + viewWidth);
-                Log.d(TAG, "viewHeight: " + viewHeight);
+                Log.d(TAG, "imageWidthPx: " + imageWidthPx);
+                Log.d(TAG, "imageHeightPx: " + imageHeightPx);
 
 
                 box.xLoc = (box.tubeLines.get(1)[0] + box.mPosX) * box.mScaleFactor;
