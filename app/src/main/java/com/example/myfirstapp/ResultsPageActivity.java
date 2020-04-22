@@ -129,9 +129,11 @@ public class ResultsPageActivity extends AppCompatActivity {
                     for (int i = 0; i < results.size(); i++) {
                         float score = Float.valueOf(results.get(i));
                         String res = score > thresh ? "Positive" : "Negative";
+                        res = i != results.size() -1 ? res : "Control";
                         htmlText += "<p> Tube " + (i + 1) + ": " + res + " (" +
                                 String.format("%.2f", score) + ")</p>";
                     }
+
                     textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
                 } else {
                     String htmlText = "<p>Results</p><p></p>";
