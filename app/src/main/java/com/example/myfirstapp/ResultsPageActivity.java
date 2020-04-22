@@ -12,7 +12,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -73,78 +75,89 @@ public class ResultsPageActivity extends AppCompatActivity {
             String response = uploadFile();
 
 
-            ImageView imageView = (ImageView) findViewById(R.id.processedImage);
-            Log.d(TAG, "imageFilePath: " + imageFilePath);
-            File imageFile = new File(imageFilePath);
-            if (!imageFile.exists()) {
-                Log.d(TAG, "DOES NOT EXIST: " + imageFilePath);
-
-            }
-            Bitmap sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-            Matrix rotationMatrix = new Matrix();
-            rotationMatrix.postRotate(getCameraPhotoOrientation(this,
-                    FileProvider.getUriForFile(this,
-                            "com.example.myfirstapp.provider",
-                            new File(imageFilePath)),
-                    imageFilePath));
-
-            Bitmap bitmap = Bitmap.createBitmap(sourceImage, 0, 0,
-                    sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true);
-            imageView.setImageBitmap(bitmap);
-
-            // set up Paint object
-            imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            Log.e(TAG, "" + imageView.getMeasuredWidth());
-            Integer stroke_width = (Integer) imageView.getMeasuredWidth() / 135;
-            Paint p = new Paint();
-            p.setAntiAlias(true);
-            p.setStyle(Paint.Style.STROKE);
-            p.setColor(Color.BLACK);
-            p.setTextSize(40 * getResources().getDisplayMetrics().density);
-            p.setStrokeWidth(stroke_width);
-
-            // Create Temp bitmap
-            Bitmap tBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
-                    Bitmap.Config.RGB_565);
-            // Create a new canvas and add Bitmap into it
-            Canvas tCanvas = new Canvas(tBitmap);
-            //Draw the image bitmap into the canvas
-            tCanvas.drawBitmap(bitmap, 0, 0, null);
-            // Draw a rectangle over canvas
+//            ImageView imageView = (ImageView) findViewById(R.id.processedImage);
+//            Log.d(TAG, "imageFilePath: " + imageFilePath);
+//            File imageFile = new File(imageFilePath);
+//            if (!imageFile.exists()) {
+//                Log.d(TAG, "DOES NOT EXIST: " + imageFilePath);
+//
+//            }
+//            Bitmap sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
+//            Matrix rotationMatrix = new Matrix();
+//            rotationMatrix.postRotate(getCameraPhotoOrientation(this,
+//                    FileProvider.getUriForFile(this,
+//                            "com.example.myfirstapp.provider",
+//                            new File(imageFilePath)),
+//                    imageFilePath));
+//
+//            Bitmap bitmap = Bitmap.createBitmap(sourceImage, 0, 0,
+//                    sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true);
+//            imageView.setImageBitmap(bitmap);
+//
+//            // set up Paint object
+//            imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//            Log.e(TAG, "" + imageView.getMeasuredWidth());
+//            Integer stroke_width = (Integer) imageView.getMeasuredWidth() / 135;
+//            Paint p = new Paint();
+//            p.setAntiAlias(true);
+//            p.setStyle(Paint.Style.STROKE);
+//            p.setColor(Color.BLACK);
+//            p.setTextSize(40 * getResources().getDisplayMetrics().density);
+//            p.setStrokeWidth(stroke_width);
+//
+//            // Create Temp bitmap
+//            Bitmap tBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
+//                    Bitmap.Config.RGB_565);
+//            // Create a new canvas and add Bitmap into it
+//            Canvas tCanvas = new Canvas(tBitmap);
+//            //Draw the image bitmap into the canvas
+//            tCanvas.drawBitmap(bitmap, 0, 0, null);
+//            // Draw a rectangle over canvas
 
 //            String response = "OK - " + message;
             if (response.charAt(0) != '[') {
                 textView.setText(response);
             } else {
+                String full_response = response.substring(1, response.length() - 1);
+                ArrayList<String> results = new ArrayList<>(Arrays.asList(
+                        full_response.split(",")));
 
-                // write to page:
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                    String htmlText = "<h2>Results</h2><br>";
-//                    for (int i = 0; i < results.size(); i++) {
-//                        htmlText += "<p> Strip " + i + ": " + results.get(i) + "</p>";
-//                    }
-//                    textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
-//                } else {
-//                    String htmlText = "<p>Results</p><p></p>";
-//                    for (int i = 0; i < results.size(); i++) {
-//                        htmlText += "<p> Strip " + i + ": " + results.get(i) + "</p>";
-//                    }
-//                    textView.setText(Html.fromHtml(htmlText));
-//                }
+//                 write to page:
+                float thresh = 1.2f;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    String htmlText = "<h2>Results</h2><br>";
+                    for (int i = 0; i < results.size(); i++) {
+                        float score = Float.valueOf(results.get(i));
+                        String res = score > thresh ? "Positive" : "Negative";
+                        htmlText += "<p> Tube " + (i + 1) + ": " + res + " (" +
+                                String.format("%.2f", score) + ")</p>";
+                    }
+                    textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
+                } else {
+                    String htmlText = "<p>Results</p><p></p>";
+                    for (int i = 0; i < results.size(); i++) {
+                        htmlText += "<p> Tube " + (i + 1) + ": " + String.format("%.2f",
+                                Float.valueOf(results.get(i))) + "</p>";
+                    }
+                    textView.setText(Html.fromHtml(htmlText));
+                }
 
 
-//                // Create string to save
-//                StringBuilder resultsTextBuilder = new StringBuilder();
-//                for (int i = 0; i < results.size(); i++) {
-//                    if (results.get(i).contains("POSITIVE")) {
-//                        resultsTextBuilder.append("+,");
-//                    } else if (results.get(i).contains("NEGATIVE")) {
-//                        resultsTextBuilder.append("-,");
-//                    } else if (results.get(i).contains("CONTROL")) {
-//                        resultsTextBuilder.append("C");
-//                    }
-//                }
-//                resultsText = resultsTextBuilder.toString();
+                // Create string to save
+                StringBuilder resultsTextBuilder = new StringBuilder();
+                for (int i = 0; i < results.size(); i++) {
+                    if (results.get(i).contains("POSITIVE")) {
+                        resultsTextBuilder.append("+,");
+                    } else if (results.get(i).contains("NEGATIVE")) {
+                        resultsTextBuilder.append("-,");
+                    } else if (results.get(i).contains("CONTROL")) {
+                        resultsTextBuilder.append("C");
+                    } else {
+                        resultsTextBuilder.append(String.format("%.2f",
+                                Float.valueOf(results.get(i))));
+                    }
+                }
+                resultsText = resultsTextBuilder.toString();
             }
             Log.d(TAG, resultsText);
             saveResultsFile(imageFilePath, resultsText);
