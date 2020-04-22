@@ -74,47 +74,6 @@ public class ResultsPageActivity extends AppCompatActivity {
         try {
             String response = uploadFile();
 
-
-//            ImageView imageView = (ImageView) findViewById(R.id.processedImage);
-//            Log.d(TAG, "imageFilePath: " + imageFilePath);
-//            File imageFile = new File(imageFilePath);
-//            if (!imageFile.exists()) {
-//                Log.d(TAG, "DOES NOT EXIST: " + imageFilePath);
-//
-//            }
-//            Bitmap sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
-//            Matrix rotationMatrix = new Matrix();
-//            rotationMatrix.postRotate(getCameraPhotoOrientation(this,
-//                    FileProvider.getUriForFile(this,
-//                            "com.example.myfirstapp.provider",
-//                            new File(imageFilePath)),
-//                    imageFilePath));
-//
-//            Bitmap bitmap = Bitmap.createBitmap(sourceImage, 0, 0,
-//                    sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true);
-//            imageView.setImageBitmap(bitmap);
-//
-//            // set up Paint object
-//            imageView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-//            Log.e(TAG, "" + imageView.getMeasuredWidth());
-//            Integer stroke_width = (Integer) imageView.getMeasuredWidth() / 135;
-//            Paint p = new Paint();
-//            p.setAntiAlias(true);
-//            p.setStyle(Paint.Style.STROKE);
-//            p.setColor(Color.BLACK);
-//            p.setTextSize(40 * getResources().getDisplayMetrics().density);
-//            p.setStrokeWidth(stroke_width);
-//
-//            // Create Temp bitmap
-//            Bitmap tBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(),
-//                    Bitmap.Config.RGB_565);
-//            // Create a new canvas and add Bitmap into it
-//            Canvas tCanvas = new Canvas(tBitmap);
-//            //Draw the image bitmap into the canvas
-//            tCanvas.drawBitmap(bitmap, 0, 0, null);
-//            // Draw a rectangle over canvas
-
-//            String response = "OK - " + message;
             if (response.charAt(0) != '[') {
                 textView.setText(response);
             } else {
@@ -156,7 +115,7 @@ public class ResultsPageActivity extends AppCompatActivity {
                         resultsTextBuilder.append("C");
                     } else {
                         resultsTextBuilder.append(String.format("%.2f",
-                                Float.valueOf(results.get(i))));
+                                Float.valueOf(results.get(i)))+", ");
                     }
                 }
                 resultsText = resultsTextBuilder.toString();

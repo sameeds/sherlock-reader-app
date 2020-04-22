@@ -427,7 +427,6 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
         String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
-        photoFilePath = getExternalFilesDir(null).getAbsolutePath() + "/deleteme.jpg";
         Log.d(TAG, photoFilePath);
         numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
         tubeDilutions = getIntent().getStringArrayListExtra(TUBE_DILUTIONS);
