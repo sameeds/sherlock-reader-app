@@ -316,7 +316,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             int total_height_strips = max_tubes + max_tubes * tube_buffer + tube_buffer;
 
             stripHeight = y0 / (total_height_strips + 2);
-            stripWidth = strip_ratio * stripHeight;
+            stripWidth = strip_ratio * stripHeight/2.5f;
 
 //            //draw guide box
 //            canvas.drawRect(x0 - stripWidth * 1.5f, 0,
@@ -427,6 +427,8 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
         String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
+        photoFilePath = getExternalFilesDir(null).getAbsolutePath() + "/deleteme.jpg";
+        Log.d(TAG, photoFilePath);
         numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
         tubeDilutions = getIntent().getStringArrayListExtra(TUBE_DILUTIONS);
         gson = new Gson();
@@ -535,7 +537,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "rotatePlusButton clicked");
-                box.mAngle += 1.5;
+                box.mAngle += 0.5;
                 box.invalidate();
             }
         });
@@ -544,7 +546,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "rotateMinusButton clicked");
-                box.mAngle -= 1.5;
+                box.mAngle -= 0.5;
                 box.invalidate();
                 Log.d(TAG, "mAngle: " + box.mAngle);
             }
