@@ -21,6 +21,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -77,18 +83,16 @@ public class ResultsPageActivity extends AppCompatActivity {
             if (response.charAt(0) != '[') {
                 textView.setText(response);
             } else {
-                String full_response = response.substring(1, response.length() - 1);
-                ArrayList<String> results = new ArrayList<>(Arrays.asList(
-                        full_response.split(",")));
+                JSONObject obj = new JSONObject(response);
+                JSONArray scores = obj.getJSONArray("final_scores");
+                JSONArray calls = obj.getJSONArray("calls");
 
-//                 write to page:
-                float thresh = 1.2f;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     String htmlText = "<h2>Results</h2><br>";
-                    for (int i = 0; i < results.size(); i++) {
-                        float score = Float.valueOf(results.get(i));
-                        String res = score > thresh ? "Positive" : "Negative";
-                        res = i != results.size() -1 ? res : "Control";
+                    for (int i = 0; i < calls.length(); i++) {
+                        float score = Float.valueOf(scores.getString(i));
+                        String res = calls.getBoolean(i) ? "Positive" : "Negative";
+                        res = i != calls.length() - 1 ? res : "Control";
                         htmlText += "<p> Tube " + (i + 1) + ": " + res + " (" +
                                 String.format("%.2f", score) + ")</p>";
                     }
@@ -96,26 +100,20 @@ public class ResultsPageActivity extends AppCompatActivity {
                     textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
                 } else {
                     String htmlText = "<p>Results</p><p></p>";
-                    for (int i = 0; i < results.size(); i++) {
-                        htmlText += "<p> Tube " + (i + 1) + ": " + String.format("%.2f",
-                                Float.valueOf(results.get(i))) + "</p>";
+                    for (int i = 0; i < calls.length(); i++) {
+                        htmlText += "<p> Tube " + (i + 1) + ": " +
+                                (calls.getBoolean(i) ? "Positive" : "Negative") + "</p>";
                     }
                     textView.setText(Html.fromHtml(htmlText));
                 }
 
-
                 // Create string to save
                 StringBuilder resultsTextBuilder = new StringBuilder();
-                for (int i = 0; i < results.size(); i++) {
-                    if (results.get(i).contains("POSITIVE")) {
-                        resultsTextBuilder.append("+,");
-                    } else if (results.get(i).contains("NEGATIVE")) {
-                        resultsTextBuilder.append("-,");
-                    } else if (results.get(i).contains("CONTROL")) {
+                for (int i = 0; i < calls.length(); i++) {
+                    if (i == calls.length() - 1) {
                         resultsTextBuilder.append("C");
                     } else {
-                        resultsTextBuilder.append(String.format("%.2f",
-                                Float.valueOf(results.get(i)))+", ");
+                        resultsTextBuilder.append(calls.getBoolean(i) ? "+," : "-,");
                     }
                 }
                 resultsText = resultsTextBuilder.toString();
