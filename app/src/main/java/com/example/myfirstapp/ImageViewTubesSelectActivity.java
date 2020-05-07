@@ -89,9 +89,17 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         private RelativeLayout mOuterContainerLayout3;
         private RelativeLayout.LayoutParams mOuterButtonParams3;
         private RelativeLayout.LayoutParams mInnerContainerLayoutParams3;
+        private RelativeLayout mOuterContainerLayout4;
+        private RelativeLayout.LayoutParams mOuterButtonParams4;
+        private RelativeLayout.LayoutParams mInnerContainerLayoutParams4;
+        private RelativeLayout mOuterContainerLayout5;
+        private RelativeLayout.LayoutParams mOuterButtonParams5;
+        private RelativeLayout.LayoutParams mInnerContainerLayoutParams5;
         private ImageButton mImageButton;
         private Button mRotatePlusButton;
         private Button mRotateMinusButton;
+        private Button mRotatePlusButton90;
+        private Button mRotateMinusButton90;
         private Boolean mlayoutParamsSet;
         private float xLoc = 0;
         private float yLoc = 0;
@@ -103,12 +111,15 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
 
 
         Box(Context context, ImageButton imageButton, Button rotatePlusButton,
-            Button rotateMinusButton) {
+            Button rotateMinusButton, Button rotatePlusButton90,
+            Button rotateMinusButton90) {
             super(context);
             mContext = context;
             mImageButton = imageButton;
             mRotatePlusButton = rotatePlusButton;
             mRotateMinusButton = rotateMinusButton;
+            mRotatePlusButton90 = rotatePlusButton90;
+            mRotateMinusButton90 = rotateMinusButton90;
             mlayoutParamsSet = false;
             // mlinearLayout =  linearLayout;
             mScaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
@@ -249,14 +260,9 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             int x0 = getWidth() / 8;
 
             mOuterContainerLayout2 = new RelativeLayout(mContext);
-            mOuterContainerLayout2.setLayoutParams(new RelativeLayout.LayoutParams(
-                    x0, x0));
-
-            mOuterButtonParams2 = new RelativeLayout.LayoutParams(
-                    x0, x0);
-            mOuterButtonParams2.addRule(RelativeLayout.ALIGN_PARENT_LEFT,
-                    RelativeLayout.TRUE);
-
+            mOuterContainerLayout2.setLayoutParams(new RelativeLayout.LayoutParams(x0, x0));
+            mOuterButtonParams2 = new RelativeLayout.LayoutParams(x0, x0);
+            mOuterButtonParams2.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
             mInnerContainerLayoutParams2 = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
@@ -265,20 +271,34 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
 
 
             mOuterContainerLayout3 = new RelativeLayout(mContext);
-            mOuterContainerLayout3.setLayoutParams(new RelativeLayout.LayoutParams(
-                    x0,
-                    x0));
-
-            mOuterButtonParams3 = new RelativeLayout.LayoutParams(
-                    x0,
-                    x0);
-            mOuterButtonParams3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
-                    RelativeLayout.TRUE);
-
+            mOuterContainerLayout3.setLayoutParams(new RelativeLayout.LayoutParams(x0, x0));
+            mOuterButtonParams3 = new RelativeLayout.LayoutParams(x0, x0);
+            mOuterButtonParams3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             mInnerContainerLayoutParams3 = new RelativeLayout.LayoutParams(
                     RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.MATCH_PARENT);
             mInnerContainerLayoutParams3.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
+                    RelativeLayout.TRUE);
+
+            mOuterContainerLayout4 = new RelativeLayout(mContext);
+            mOuterContainerLayout4.setLayoutParams(new RelativeLayout.LayoutParams(x0, x0));
+            mOuterButtonParams4 = new RelativeLayout.LayoutParams(x0, x0);
+            mOuterButtonParams4.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+            mInnerContainerLayoutParams4 = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+            mInnerContainerLayoutParams4.addRule(RelativeLayout.END_OF,
+                    RelativeLayout.TRUE);
+
+
+            mOuterContainerLayout5 = new RelativeLayout(mContext);
+            mOuterContainerLayout5.setLayoutParams(new RelativeLayout.LayoutParams(x0, x0));
+            mOuterButtonParams5 = new RelativeLayout.LayoutParams(x0, x0);
+            mOuterButtonParams5.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            mInnerContainerLayoutParams5 = new RelativeLayout.LayoutParams(
+                    RelativeLayout.LayoutParams.MATCH_PARENT,
+                    RelativeLayout.LayoutParams.MATCH_PARENT);
+            mInnerContainerLayoutParams5.addRule(RelativeLayout.ALIGN_PARENT_RIGHT,
                     RelativeLayout.TRUE);
         }
 
@@ -316,7 +336,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             int total_height_strips = max_tubes + max_tubes * tube_buffer + tube_buffer;
 
             stripHeight = y0 / (total_height_strips + 2);
-            stripWidth = strip_ratio * stripHeight/2.5f;
+            stripWidth = strip_ratio * stripHeight / 2.5f;
 
 //            //draw guide box
 //            canvas.drawRect(x0 - stripWidth * 1.5f, 0,
@@ -367,8 +387,8 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
             Log.d(TAG, "mAngle: " + mAngle);
 
+            // add button to center
             ((ViewGroup) mImageButton.getParent()).removeView(mImageButton);
-//            ((ViewGroup)this.getParent()).addView(mImageButton);
             mOuterButtonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mImageButton.setLayoutParams(mOuterButtonParams);
             mOuterContainerLayout.addView(mImageButton);
@@ -377,6 +397,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             }
             addContentView(mOuterContainerLayout, mInnerContainerLayoutParams);
 
+            // add +0.5 button
             ((ViewGroup) mRotateMinusButton.getParent()).removeView(mRotateMinusButton);
             mOuterButtonParams2.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mRotateMinusButton.setLayoutParams(mOuterButtonParams2);
@@ -386,6 +407,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             }
             addContentView(mOuterContainerLayout2, mInnerContainerLayoutParams2);
 
+            // add -0.5 button
             ((ViewGroup) mRotatePlusButton.getParent()).removeView(mRotatePlusButton);
             mOuterButtonParams3.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
             mRotatePlusButton.setLayoutParams(mOuterButtonParams3);
@@ -394,6 +416,28 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
                 ((ViewGroup) mOuterContainerLayout3.getParent()).removeView(mOuterContainerLayout3);
             }
             addContentView(mOuterContainerLayout3, mInnerContainerLayoutParams3);
+
+            // add +90 button
+            ((ViewGroup) mRotateMinusButton90.getParent()).removeView(mRotateMinusButton90);
+            mOuterButtonParams4.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            mOuterButtonParams4.addRule(RelativeLayout.RIGHT_OF, mRotateMinusButton.getId());
+            mRotateMinusButton90.setLayoutParams(mOuterButtonParams4);
+            mOuterContainerLayout4.addView(mRotateMinusButton90);
+            if (((ViewGroup) mOuterContainerLayout4.getParent()) != null) {
+                ((ViewGroup) mOuterContainerLayout4.getParent()).removeView(mOuterContainerLayout4);
+            }
+            addContentView(mOuterContainerLayout4, mInnerContainerLayoutParams4);
+
+            // add -90 button
+            ((ViewGroup) mRotatePlusButton90.getParent()).removeView(mRotatePlusButton90);
+            mOuterButtonParams5.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+            mRotatePlusButton90.setLayoutParams(mOuterButtonParams5);
+            mOuterContainerLayout5.addView(mRotatePlusButton90);
+            if (((ViewGroup) mOuterContainerLayout5.getParent()) != null) {
+                ((ViewGroup) mOuterContainerLayout5.getParent()).removeView(mOuterContainerLayout5);
+            }
+            addContentView(mOuterContainerLayout5, mInnerContainerLayoutParams5);
+
             canvas.restore();
 
         }
@@ -485,11 +529,14 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         ImageButton sendToResultsButton = findViewById(R.id.sendToServerButton);
         Button rotatePlusButton = findViewById(R.id.rotatePlus);
         Button rotateMinusButton = findViewById(R.id.rotateMinus);
+        Button rotatePlusButton90 = findViewById(R.id.rotatePlus90);
+        Button rotateMinusButton90 = findViewById(R.id.rotateMinus90);
 
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-        Box box = new Box(this, sendToResultsButton, rotatePlusButton, rotateMinusButton);
+        Box box = new Box(this, sendToResultsButton, rotatePlusButton, rotateMinusButton,
+                rotatePlusButton90, rotateMinusButton90);
         addContentView(box, params);
 
         sendToResultsButton.setOnClickListener(new View.OnClickListener() {
@@ -546,6 +593,25 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "rotateMinusButton clicked");
                 box.mAngle -= 0.5;
+                box.invalidate();
+                Log.d(TAG, "mAngle: " + box.mAngle);
+            }
+        });
+
+        rotatePlusButton90.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "rotatePlusButton clicked");
+                box.mAngle += 90;
+                box.invalidate();
+            }
+        });
+
+        rotateMinusButton90.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "rotateMinusButton clicked");
+                box.mAngle -= 90;
                 box.invalidate();
                 Log.d(TAG, "mAngle: " + box.mAngle);
             }

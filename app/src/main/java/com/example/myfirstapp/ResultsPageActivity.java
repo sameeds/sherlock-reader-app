@@ -80,44 +80,41 @@ public class ResultsPageActivity extends AppCompatActivity {
         try {
             String response = uploadFile();
 
-            if (response.charAt(0) != '[') {
-                textView.setText(response);
-            } else {
-                JSONObject obj = new JSONObject(response);
-                JSONArray scores = obj.getJSONArray("final_scores");
-                JSONArray calls = obj.getJSONArray("calls");
+            JSONObject obj = new JSONObject(response);
+            JSONArray scores = obj.getJSONArray("final_scores");
+            JSONArray calls = obj.getJSONArray("calls");
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    String htmlText = "<h2>Results</h2><br>";
-                    for (int i = 0; i < calls.length(); i++) {
-                        float score = Float.valueOf(scores.getString(i));
-                        String res = calls.getBoolean(i) ? "Positive" : "Negative";
-                        res = i != calls.length() - 1 ? res : "Control";
-                        htmlText += "<p> Tube " + (i + 1) + ": " + res + " (" +
-                                String.format("%.2f", score) + ")</p>";
-                    }
-
-                    textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
-                } else {
-                    String htmlText = "<p>Results</p><p></p>";
-                    for (int i = 0; i < calls.length(); i++) {
-                        htmlText += "<p> Tube " + (i + 1) + ": " +
-                                (calls.getBoolean(i) ? "Positive" : "Negative") + "</p>";
-                    }
-                    textView.setText(Html.fromHtml(htmlText));
-                }
-
-                // Create string to save
-                StringBuilder resultsTextBuilder = new StringBuilder();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                String htmlText = "<h2>Results</h2><br>";
                 for (int i = 0; i < calls.length(); i++) {
-                    if (i == calls.length() - 1) {
-                        resultsTextBuilder.append("C");
-                    } else {
-                        resultsTextBuilder.append(calls.getBoolean(i) ? "+," : "-,");
-                    }
+                    float score = Float.valueOf(scores.getString(i));
+                    String res = calls.getInt(i) == 1 ? "Positive" : "Negative";
+                    res = i != calls.length() - 1 ? res : "Control";
+                    htmlText += "<p> Tube " + (i + 1) + ": " + res + " (" +
+                            String.format("%.2f", score) + ")</p>";
                 }
-                resultsText = resultsTextBuilder.toString();
+
+                textView.setText(Html.fromHtml(htmlText, Html.FROM_HTML_MODE_COMPACT));
+            } else {
+                String htmlText = "<p>Results</p><p></p>";
+                for (int i = 0; i < calls.length(); i++) {
+                    htmlText += "<p> Tube " + (i + 1) + ": " +
+                            (calls.getInt(i) == 1 ? "Positive" : "Negative") + "</p>";
+                }
+                textView.setText(Html.fromHtml(htmlText));
             }
+
+            // Create string to save
+            StringBuilder resultsTextBuilder = new StringBuilder();
+            for (int i = 0; i < calls.length(); i++) {
+                if (i == calls.length() - 1) {
+                    resultsTextBuilder.append("C");
+                } else {
+                    resultsTextBuilder.append(calls.getInt(i) == 1 ? "+," : "-,");
+                }
+            }
+            resultsText = resultsTextBuilder.toString();
+
             Log.d(TAG, resultsText);
             saveResultsFile(imageFilePath, resultsText);
 
@@ -154,7 +151,7 @@ public class ResultsPageActivity extends AppCompatActivity {
 
         // open a URL connection to the Servlet
         FileInputStream fileInputStream = new FileInputStream(sourceFile);
-        String requestAddress = "http://34.95.33.102:3002/upload";
+        String requestAddress = "http://34.95.33.102:3001/upload";
         URL url = new URL(requestAddress);
         Gson gson = new Gson();
         Log.d(TAG, gson.toJson(tubeDilutions));

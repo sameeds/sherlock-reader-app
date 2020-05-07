@@ -91,4 +91,17 @@
         app:layout_constraintEnd_toEndOf="@+id/view_previous_tests"
         app:layout_constraintStart_toEndOf="@+id/tubeCount" />
 
+    <Button
+        android:id="@+id/loadPicture"
+        android:layout_width="119dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:onClick="loadImage"
+        android:text="@string/load_picture"
+        app:layout_constraintBottom_toBottomOf="@+id/sample_name"
+        app:layout_constraintEnd_toEndOf="@+id/view_previous_tests"
+        app:layout_constraintStart_toEndOf="@+id/sample_name"
+        app:layout_constraintTop_toTopOf="@+id/sample_name" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

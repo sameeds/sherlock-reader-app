@@ -122,27 +122,6 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
             intent.putExtra(NUMB_TUBES, numb_tubes);
             intent.putStringArrayListExtra(TUBE_DILUTIONS, dilutions);
             startActivity(intent);
-//
-//            Log.d("SabetiLaunchCameraAp...", "setting ImageView");
-//            if (photoFile != null && photoFile.exists()) {
-//                Bitmap sourceImage = BitmapFactory.decodeFile(photoFile.getAbsolutePath());
-//                Matrix rotationMatrix = new Matrix();
-//                rotationMatrix.postRotate(getCameraPhotoOrientation(this,
-//                        FileProvider.getUriForFile(this,
-//                        "com.example.myfirstapp.provider",
-//                        photoFile),
-//                        photoFile.getAbsolutePath()));
-//                imageView.setImageBitmap(Bitmap.createBitmap(sourceImage, 0, 0,
-//                        sourceImage.getWidth(), sourceImage.getHeight(), rotationMatrix, true));
-////                imageView.setImageBitmap(BitmapFactory.decodeFile(photoFile.getAbsolutePath()));
-////                imageView.setImageURI(Uri.fromFile(photoFile));
-////                imageView.setRotation(getCameraPhotoOrientation(this,
-////                        FileProvider.getUriForFile(this,
-////                        "com.example.myfirstapp.provider",
-////                        photoFile),
-////                        photoFile.getAbsolutePath()));
-//            }
-
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }

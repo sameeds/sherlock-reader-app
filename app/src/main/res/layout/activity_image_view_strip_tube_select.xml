@@ -45,6 +45,22 @@
             app:layout_constraintStart_toEndOf="@+id/sendToServerButton"
             app:layout_constraintTop_toTopOf="@+id/sendToServerButton" />
 
+        <Button
+            android:id="@+id/rotatePlus90"
+            style="@android:style/Widget.Holo.Light.Button"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="+90"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/sendToServerButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/rotatePlus"
+            app:layout_constraintTop_toTopOf="@+id/sendToServerButton" />
+
         <ImageButton
             android:id="@+id/sendToServerButton"
             style="@android:style/Widget.Holo.Light.ImageButton"
@@ -72,6 +88,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/sendToServerButton" />
 
+        <Button
+            android:id="@+id/rotateMinus90"
+            style="@android:style/Widget.Holo.Light.ImageButton"
+            android:layout_width="66dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:text="-90"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/sendToServerButton"
+            app:layout_constraintEnd_toStartOf="@+id/rotateMinus"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/sendToServerButton" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
