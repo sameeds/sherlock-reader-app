@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import android.content.Context;
 import android.content.Intent;
@@ -29,11 +29,11 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.util.ArrayList;
 
-import static com.example.myfirstapp.ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR;
-import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
-import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
-import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
-import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
+import static com.sabeti.shine_reader.ImageViewBoxSelectActivity.M_Y_SCALE_FACTOR;
+import static com.sabeti.shine_reader.MainActivity.TUBE_DILUTIONS;
+import static com.sabeti.shine_reader.MainActivity.SAMPLE_NAME;
+import static com.sabeti.shine_reader.MainActivity.IMAGE_FILE_NAME;
+import static com.sabeti.shine_reader.MainActivity.NUMB_TUBES;
 
 public class ImageViewTubesSelectActivity extends AppCompatActivity {
 
@@ -312,8 +312,8 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
             }
             paint.setColor(Color.parseColor("#FFFFFF"));
 //            canvas.drawRect(xLoc, yLoc, xLoc + 20, yLoc + 40, paint);
-            Log.d(TAG, "xLoc: " + xLoc);
-            Log.d(TAG, "yLoc: " + yLoc);
+//            Log.d(TAG, "xLoc: " + xLoc);
+//            Log.d(TAG, "yLoc: " + yLoc);
 
             canvas.save();
             canvas.scale(mScaleFactor, mScaleFactor);
@@ -380,12 +380,12 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
                     currTopLeftX + diffWidthX, currTopLeftY - diffWidthY});
 
             mRectArea = (stripWidth * stripWidth * mScaleFactor);
-            Log.d(TAG, "mPosX: " + mPosX);
-            Log.d(TAG, "mPosY: " + mPosY);
-            Log.d(TAG, "mScaleFactor: " + mScaleFactor);
-            Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
-            Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
-            Log.d(TAG, "mAngle: " + mAngle);
+//            Log.d(TAG, "mPosX: " + mPosX);
+//            Log.d(TAG, "mPosY: " + mPosY);
+//            Log.d(TAG, "mScaleFactor: " + mScaleFactor);
+//            Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
+//            Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
+//            Log.d(TAG, "mAngle: " + mAngle);
 
             // add button to center
             ((ViewGroup) mImageButton.getParent()).removeView(mImageButton);
@@ -458,7 +458,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
                     ((line[1] + box.mPosY) * box.mScaleFactor - yBuffer) * imageViewScaleFactor,
                     (line[2] + box.mPosX) * box.mScaleFactor * imageViewScaleFactor,
                     ((line[3] + box.mPosY) * box.mScaleFactor - yBuffer) * imageViewScaleFactor};
-            Log.d(TAG, gson.toJson(convertedLine));
+//            Log.d(TAG, gson.toJson(convertedLine));
             convertedTubeLines.add(convertedLine);
         }
         return convertedTubeLines;
@@ -471,17 +471,17 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
         String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
-        Log.d(TAG, photoFilePath);
-        numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
+//        Log.d(TAG, photoFilePath);
+//        numbTubes = Integer.parseInt(getIntent().getStringExtra(NUMB_TUBES));
         tubeDilutions = getIntent().getStringArrayListExtra(TUBE_DILUTIONS);
         gson = new Gson();
 
-        Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
+//        Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
         File imageFile = new File(photoFilePath);
-        if (!imageFile.exists()) {
-            Log.d("ImageViewBoxSelectAct", "DOES NOT EXIST: " + photoFilePath);
-
-        }
+//        if (!imageFile.exists()) {
+//            Log.d("ImageViewBoxSelectAct", "DOES NOT EXIST: " + photoFilePath);
+//
+//        }
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 16;
         sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
@@ -501,8 +501,8 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         imageWidthPx = imageView.getMeasuredWidth(); // this is the image width
         imageHeightPx = imageView.getMeasuredHeight(); // this is the image height
 
-        Log.d(TAG, "imageWidthPx: " + imageWidthPx);
-        Log.d(TAG, "imageHeightPx: " + imageHeightPx);
+//        Log.d(TAG, "imageWidthPx: " + imageWidthPx);
+//        Log.d(TAG, "imageHeightPx: " + imageHeightPx);
 
 
         addBox(photoFilePath);
@@ -542,8 +542,8 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         sendToResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("", "");
-                Log.d(TAG, "button pressed");
+//                Log.d("", "");
+//                Log.d(TAG, "button pressed");
                 // if the aspect ratio of canvas is larger than the aspect ratio of the image
                 // (height/width), then the scaling factor of image pixel to canvas pixel is
                 // constrained by the ratio of the widths. e.g. canvas is 400x200, and the image is
@@ -561,15 +561,15 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
                 resultsPageIntent.putStringArrayListExtra(TUBE_DILUTIONS, tubeDilutions);
 
                 resultsPageIntent.putExtra(TUBE_COORDS, gson.toJson(convertBoxPxToImagePx(box)));
-                Log.d(TAG, "imageViewScaleFactor: " + imageViewScaleFactor);
-                Log.d(TAG, "box.mScaleFactor:" + box.mScaleFactor);
-                Log.d(TAG, "box.mRectArea: " + box.mRectArea);
-                Log.d(TAG, "box.mRectArea * imageViewScaleFactor * imageViewScaleFactor: "
-                        + box.mRectArea * imageViewScaleFactor * imageViewScaleFactor);
-                Log.d(TAG, "box.getWidth(): " + box.getWidth());
-                Log.d(TAG, "box.getHeight(): " + box.getHeight());
-                Log.d(TAG, "imageWidthPx: " + imageWidthPx);
-                Log.d(TAG, "imageHeightPx: " + imageHeightPx);
+//                Log.d(TAG, "imageViewScaleFactor: " + imageViewScaleFactor);
+//                Log.d(TAG, "box.mScaleFactor:" + box.mScaleFactor);
+//                Log.d(TAG, "box.mRectArea: " + box.mRectArea);
+//                Log.d(TAG, "box.mRectArea * imageViewScaleFactor * imageViewScaleFactor: "
+//                        + box.mRectArea * imageViewScaleFactor * imageViewScaleFactor);
+//                Log.d(TAG, "box.getWidth(): " + box.getWidth());
+//                Log.d(TAG, "box.getHeight(): " + box.getHeight());
+//                Log.d(TAG, "imageWidthPx: " + imageWidthPx);
+//                Log.d(TAG, "imageHeightPx: " + imageHeightPx);
 
 
                 box.xLoc = (box.tubeLines.get(1)[0] + box.mPosX) * box.mScaleFactor;
@@ -582,7 +582,7 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         rotatePlusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "rotatePlusButton clicked");
+//                Log.d(TAG, "rotatePlusButton clicked");
                 box.mAngle += 0.5;
                 box.invalidate();
             }
@@ -591,17 +591,17 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         rotateMinusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "rotateMinusButton clicked");
+//                Log.d(TAG, "rotateMinusButton clicked");
                 box.mAngle -= 0.5;
                 box.invalidate();
-                Log.d(TAG, "mAngle: " + box.mAngle);
+//                Log.d(TAG, "mAngle: " + box.mAngle);
             }
         });
 
         rotatePlusButton90.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "rotatePlusButton clicked");
+//                Log.d(TAG, "rotatePlusButton clicked");
                 box.mAngle += 90;
                 box.invalidate();
             }
@@ -610,10 +610,10 @@ public class ImageViewTubesSelectActivity extends AppCompatActivity {
         rotateMinusButton90.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "rotateMinusButton clicked");
+//                Log.d(TAG, "rotateMinusButton clicked");
                 box.mAngle -= 90;
                 box.invalidate();
-                Log.d(TAG, "mAngle: " + box.mAngle);
+//                Log.d(TAG, "mAngle: " + box.mAngle);
             }
         });
     }

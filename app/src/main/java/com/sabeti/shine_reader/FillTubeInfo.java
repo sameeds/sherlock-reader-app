@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,9 +15,9 @@ import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 
-import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
-import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
-import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
+import static com.sabeti.shine_reader.MainActivity.SAMPLE_NAME;
+import static com.sabeti.shine_reader.MainActivity.NUMB_TUBES;
+import static com.sabeti.shine_reader.MainActivity.TUBE_DILUTIONS;
 
 public class FillTubeInfo extends AppCompatActivity {
 
@@ -90,7 +90,7 @@ public class FillTubeInfo extends AppCompatActivity {
 //        Intent intent = new Intent(this, ImageViewStripsSelectActivity.class);
 
         // Add the number of tubes indicated by the radio button
-        Log.v(TAG, "numbTubes: " + numbTubes);
+//        Log.v(TAG, "numbTubes: " + numbTubes);
         intent.putExtra(NUMB_TUBES, String.valueOf(numbTubes));
 
         EditText editText = (EditText) findViewById(R.id.sample_name);

@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 /*
  * Code modified from The Android Open Source Project
  *  Source license:
@@ -71,7 +71,7 @@ import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
+import static com.sabeti.shine_reader.MainActivity.SAMPLE_NAME;
 
 public class Camera2BasicFragment extends Fragment
         implements View.OnTouchListener, ActivityCompat.OnRequestPermissionsResultCallback {
@@ -417,7 +417,7 @@ public class Camera2BasicFragment extends Fragment
         } else if (notBigEnough.size() > 0) {
             return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
+//            Log.e(TAG, "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -438,7 +438,7 @@ public class Camera2BasicFragment extends Fragment
         view.findViewById(R.id.picture).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "picture button onClickListener");
+//                Log.d(TAG, "picture button onClickListener");
                 takePicture();
             }
         });
@@ -446,7 +446,7 @@ public class Camera2BasicFragment extends Fragment
         view.findViewById(R.id.info).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "info button onClickListener");
+//                Log.d(TAG, "info button onClickListener");
                 Activity activity = getActivity();
                 if (null != activity) {
                     new AlertDialog.Builder(activity)
@@ -477,8 +477,8 @@ public class Camera2BasicFragment extends Fragment
 //                String fileName = storageDir + "/results/" + imageFileName + ".jpg";
         if (!outputDirectory.exists()) {
             if (!outputDirectory.mkdirs()) {
-                Log.e("SabetiLaunchcameraAp...",
-                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
+//                Log.e("SabetiLaunchcameraAp...",
+//                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
                 outputDirectory = null;
             }
         }
@@ -586,7 +586,7 @@ public class Camera2BasicFragment extends Fragment
                         }
                         break;
                     default:
-                        Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+//                        Log.e(TAG, "Display rotation is invalid: " + displayRotation);
                 }
 
                 Point displaySize = new Point();
@@ -864,7 +864,7 @@ public class Camera2BasicFragment extends Fragment
      * {@link #mCaptureCallback} from both {@link #lockFocus()}.
      */
     private void captureStillPicture() {
-        Log.d(TAG, "Attempting to save: " + mFile.toString());
+//        Log.d(TAG, "Attempting to save: " + mFile.toString());
         try {
             final Activity activity = getActivity();
             if (null == activity || null == mCameraDevice) {
@@ -892,7 +892,7 @@ public class Camera2BasicFragment extends Fragment
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved image: " + mFile);
-                    Log.d(TAG, mFile.toString());
+//                    Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }
             };
@@ -902,7 +902,7 @@ public class Camera2BasicFragment extends Fragment
             mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
-            Log.d(TAG, "Failed to save: " + mFile.toString());
+//            Log.d(TAG, "Failed to save: " + mFile.toString());
         }
     }
 
@@ -947,11 +947,11 @@ public class Camera2BasicFragment extends Fragment
     public boolean onTouch(View view, MotionEvent motionEvent) {
         switch (view.getId()) {
             case R.id.picture:{
-                Log.d(TAG, "picture button onTouchListener");
+//                Log.d(TAG, "picture button onTouchListener");
                 return false;
             }
             case R.id.info: {
-                Log.d(TAG, "info button onTouchListener");
+//                Log.d(TAG, "info button onTouchListener");
                 return false;
             }
             case R.id.texture: {
@@ -962,7 +962,7 @@ public class Camera2BasicFragment extends Fragment
                         return false;
                     }
                     if (mManualFocusEngaged) {
-                        Log.d(TAG, "Manual focus already engaged");
+//                        Log.d(TAG, "Manual focus already engaged");
                         return true;
                     }
 
@@ -1003,7 +1003,7 @@ public class Camera2BasicFragment extends Fragment
                         @Override
                         public void onCaptureFailed(CameraCaptureSession session, CaptureRequest request, CaptureFailure failure) {
                             super.onCaptureFailed(session, request, failure);
-                            Log.e(TAG, "Manual AF failure: " + failure);
+//                            Log.e(TAG, "Manual AF failure: " + failure);
                             mManualFocusEngaged = false;
                         }
                     };

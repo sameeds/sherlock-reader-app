@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 /*
  * Code modified from The Android Open Source Project
  *  Source license:

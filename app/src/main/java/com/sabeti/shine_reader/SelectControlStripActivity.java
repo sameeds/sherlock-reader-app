@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.appcompat.app.AppCompatActivity;
 

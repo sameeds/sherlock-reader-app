@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,9 +29,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
-import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
-import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
+import static com.sabeti.shine_reader.MainActivity.SAMPLE_NAME;
+import static com.sabeti.shine_reader.MainActivity.NUMB_TUBES;
+import static com.sabeti.shine_reader.MainActivity.TUBE_DILUTIONS;
 
 public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
     private ImageView imageView;
@@ -166,8 +166,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
                 }
             }
 
-            Log.i("RotateImage", "Exif orientation: " + orientation);
-            Log.i("RotateImage", "Rotate value: " + rotate);
+//            Log.i("RotateImage", "Exif orientation: " + orientation);
+//            Log.i("RotateImage", "Rotate value: " + rotate);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,8 +187,8 @@ public class SabetiLaunchCameraAppActivity extends AppCompatActivity {
 //                String fileName = storageDir + "/results/" + imageFileName + ".jpg";
         if (!outputDirectory.exists()) {
             if (!outputDirectory.mkdirs()) {
-                Log.e("SabetiLaunchcameraAp...",
-                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
+//                Log.e("SabetiLaunchcameraAp...",
+//                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
                 outputDirectory = null;
             }
         }

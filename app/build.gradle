@@ -1,10 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\Sameed\\Documents\\Educational\\PhD\\Pardis\\upload-keystore.jks')
+            storePassword '4Ctfd8kwyq6y4m8BJota'
+            keyPassword '4Ctfd8kwyq6y4m8BJota'
+            keyAlias = 'shine-covid-key'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.example.myfirstapp"
+        applicationId "com.sabeti.shine_reader"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1

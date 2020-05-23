@@ -1,31 +1,20 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -38,17 +27,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import static com.example.myfirstapp.ImageViewTubesSelectActivity.TUBE_COORDS;
-import static com.example.myfirstapp.MainActivity.NUMB_TUBES;
-import static com.example.myfirstapp.MainActivity.TUBE_DILUTIONS;
-import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
+import static com.sabeti.shine_reader.ImageViewTubesSelectActivity.TUBE_COORDS;
+import static com.sabeti.shine_reader.MainActivity.NUMB_TUBES;
+import static com.sabeti.shine_reader.MainActivity.TUBE_DILUTIONS;
 
 public class ResultsPageActivity extends AppCompatActivity {
     static final String TAG = "ResultsPageActivity";
@@ -77,9 +63,15 @@ public class ResultsPageActivity extends AppCompatActivity {
         textView.setText("");
 
         String resultsText = "";
+        String response = "";
         try {
-            String response = uploadFile();
-
+             response = uploadFile();
+        }
+        catch (Exception e) {
+            //textView.setText(message + " upload failed");
+            textView.setText(response + " upload failed");
+        }
+        try{
             JSONObject obj = new JSONObject(response);
             JSONArray scores = obj.getJSONArray("final_scores");
             JSONArray calls = obj.getJSONArray("calls");
@@ -115,13 +107,12 @@ public class ResultsPageActivity extends AppCompatActivity {
             }
             resultsText = resultsTextBuilder.toString();
 
-            Log.d(TAG, resultsText);
+//            Log.d(TAG, resultsText);
             saveResultsFile(imageFilePath, resultsText);
 
         } catch (Exception e) {
-            //textView.setText(message + " upload failed");
-            textView.setText(e.getMessage());
-            Log.e(TAG, "exception", e);
+            textView.setText(response + ". upload failed");
+//            Log.e(TAG, "exception", e);
         }
     }
 
@@ -131,7 +122,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         canvas.getClipBounds(r);
         paint.setTextAlign(Paint.Align.LEFT);
         paint.getTextBounds(text, 0, text.length(), r);
-        Log.e(TAG, "" + r.width());
+//        Log.e(TAG, "" + r.width());
         Integer x = left + (right - left) / 2 - r.width() / 2;
         canvas.drawText(text, x, y, paint);
     }
@@ -154,7 +145,7 @@ public class ResultsPageActivity extends AppCompatActivity {
         String requestAddress = "http://34.95.33.102:3001/upload";
         URL url = new URL(requestAddress);
         Gson gson = new Gson();
-        Log.d(TAG, gson.toJson(tubeDilutions));
+//        Log.d(TAG, gson.toJson(tubeDilutions));
 
         // Open a HTTP  connection to  the URL
         conn = (HttpURLConnection) url.openConnection();
@@ -222,8 +213,8 @@ public class ResultsPageActivity extends AppCompatActivity {
         in.close();
 
         String serverResponseMessage = response.toString();
-        Log.v("uploadFile", "HTTP Response is : "
-                + serverResponseMessage);
+//        Log.v("uploadFile", "HTTP Response is : "
+//                + serverResponseMessage);
 
         //close the streams
         fileInputStream.close();
@@ -238,13 +229,13 @@ public class ResultsPageActivity extends AppCompatActivity {
         String image_name = image_file.getName();
         String sample_name = image_name.substring(0, image_name.length() - 4);
         File results_file = new File(image_file.getParentFile().toString(), sample_name + ".txt");
-        Log.d(TAG, "resultsText: " + resultsText);
+//        Log.d(TAG, "resultsText: " + resultsText);
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(results_file), StandardCharsets.UTF_8))) {
             writer.write(resultsText);
         } catch (Exception e) {
-            //textView.setText(message + " upload failed");
-            Log.e(TAG, "exception", e);
+            sample_name = "Failed";
+//            Log.e(TAG, "exception", e);
         }
 
         return Boolean.TRUE;

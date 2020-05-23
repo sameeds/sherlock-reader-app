@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,20 +19,18 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
+import static com.sabeti.shine_reader.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
 public class MainActivity extends AppCompatActivity {
     public static final String SAMPLE_NAME = "com.example.myfirstapp.SAMPLE_NAME";
@@ -76,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d("chk", "id" + checkedId);
+//                Log.d("chk", "id" + checkedId);
                 test = getTestVsTrain(checkedId);
                 ((EditText) findViewById(R.id.sample_name)).setText(makeDefaultEditText(numbTubes));
             }
@@ -143,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         numbTubes = Integer.parseInt(((EditText) findViewById(R.id.tubeCount)).getText().toString());
-        Log.v(TAG, "numbTubes: " + numbTubes);
+//        Log.v(TAG, "numbTubes: " + numbTubes);
         intent.putExtra(NUMB_TUBES, String.valueOf(numbTubes));
 
         EditText editText = (EditText) findViewById(R.id.sample_name);
@@ -226,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(this, ImageViewTubesSelectActivity.class);
                 numbTubes = Integer.parseInt(((EditText) findViewById(R.id.tubeCount)).getText().toString());
-                Log.v(TAG, "numbTubes: " + numbTubes);
+//                Log.v(TAG, "numbTubes: " + numbTubes);
                 intent.putExtra(NUMB_TUBES, String.valueOf(numbTubes));
                 intent.putExtra(SAMPLE_NAME, photoFile.getAbsolutePath());
                 ArrayList<String> dilutions = new ArrayList<>();
@@ -253,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
 //                String fileName = storageDir + "/results/" + imageFileName + ".jpg";
         if (!outputDirectory.exists()) {
             if (!outputDirectory.mkdirs()) {
-                Log.e("SabetiLaunchcameraAp...",
-                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
+//                Log.e("SabetiLaunchcameraAp...",
+//                        "Failed to create directory: " + outputDirectory.getAbsolutePath());
                 outputDirectory = null;
             }
         }
@@ -275,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 return false;
             }
-            Log.e(TAG, permission + " granted");
+//            Log.e(TAG, permission + " granted");
         }
         return true;
     }

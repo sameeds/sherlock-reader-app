@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 
 /*
@@ -24,7 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 
-import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
+import static com.sabeti.shine_reader.MainActivity.SAMPLE_NAME;
 
 
 public class CameraActivity extends AppCompatActivity {

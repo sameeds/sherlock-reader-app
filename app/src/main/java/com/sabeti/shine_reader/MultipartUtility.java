@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import android.util.Log;
 
@@ -39,7 +39,7 @@ public class MultipartUtility {
         boundary = "****" + System.currentTimeMillis() + "****";
 
         URL url = new URL(requestURL);
-        Log.e("URL", "URL : " + requestURL.toString());
+//        Log.e("URL", "URL : " + requestURL.toString());
         httpConn = (HttpURLConnection) url.openConnection();
         httpConn.setUseCaches(false);
         httpConn.setDoOutput(true); // indicates POST method

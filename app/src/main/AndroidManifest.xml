@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myfirstapp">
+    package="com.sabeti.shine_reader">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -25,31 +25,31 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".FillTubeInfo"></activity>
-        <activity android:name=".ImageViewBoxSelectActivity" />
+        <activity android:name="com.sabeti.shine_reader.FillTubeInfo"></activity>
+        <activity android:name="com.sabeti.shine_reader.ImageViewBoxSelectActivity" />
         <activity
-            android:name=".SabetiLaunchCameraAppActivity"
+            android:name="com.sabeti.shine_reader.SabetiLaunchCameraAppActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait" />
-        <activity android:name=".SelectControlStripActivity" />
-        <activity android:name=".ViewPreviousTestsActivity" />
-        <activity android:name=".ImageViewTubesSelectActivity" />
+        <activity android:name="com.sabeti.shine_reader.SelectControlStripActivity" />
+        <activity android:name="com.sabeti.shine_reader.ViewPreviousTestsActivity" />
+        <activity android:name="com.sabeti.shine_reader.ImageViewTubesSelectActivity" />
         <activity
-            android:name=".ResultsPageActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.sabeti.shine_reader.ResultsPageActivity"
+            android:parentActivityName="com.sabeti.shine_reader.MainActivity" />
         <activity
-            android:name=".CameraActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.sabeti.shine_reader.CameraActivity"
+            android:parentActivityName="com.sabeti.shine_reader.MainActivity" />
         <activity
-            android:name=".DisplayMessageActivity"
-            android:parentActivityName=".MainActivity">
+            android:name="com.sabeti.shine_reader.DisplayMessageActivity"
+            android:parentActivityName="com.sabeti.shine_reader.MainActivity">
 
             <!-- The meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.sabeti.shine_reader.MainActivity" />
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.sabeti.shine_reader.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

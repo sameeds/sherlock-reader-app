@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -26,9 +26,9 @@ import android.widget.RelativeLayout;
 
 import java.io.File;
 
-import static com.example.myfirstapp.MainActivity.SAMPLE_NAME;
-import static com.example.myfirstapp.MainActivity.IMAGE_FILE_NAME;
-import static com.example.myfirstapp.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
+import static com.sabeti.shine_reader.MainActivity.SAMPLE_NAME;
+import static com.sabeti.shine_reader.MainActivity.IMAGE_FILE_NAME;
+import static com.sabeti.shine_reader.SabetiLaunchCameraAppActivity.getCameraPhotoOrientation;
 
 public class ImageViewBoxSelectActivity extends AppCompatActivity {
 
@@ -191,11 +191,11 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
             //draw guide box
             canvas.drawRect(x0 - strip_width * 2, (y0 - strip_height) / 2, x0 - strip_width, y0 - (y0 - strip_height) / 2, paint);
             mRectArea = (strip_width * strip_height * mScaleFactor);
-            Log.d(TAG, "mPosX: " + mPosX);
-            Log.d(TAG, "mPosY: " + mPosY);
-            Log.d(TAG, "mScaleFactor: " + mScaleFactor);
-            Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
-            Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
+//            Log.d(TAG, "mPosX: " + mPosX);
+//            Log.d(TAG, "mPosY: " + mPosY);
+//            Log.d(TAG, "mScaleFactor: " + mScaleFactor);
+//            Log.d(TAG, "boxViewWidth: " + this.getMeasuredWidth());
+//            Log.d(TAG, "boxViewHeight: " + this.getMeasuredHeight());
 
             paint.setStrokeWidth(x0 / 200);
             paint.setTextSize(16 * getResources().getDisplayMetrics().density);
@@ -222,12 +222,12 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.capturedImage);
 
         String photoFilePath = getIntent().getStringExtra(SAMPLE_NAME);
-        Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
+//        Log.d("ImageViewBoxSelectAct", "photoFilePath: " + photoFilePath);
         File imageFile = new File(photoFilePath);
-        if (!imageFile.exists()) {
-            Log.d("ImageViewBoxSelectAct", "DOES NOT EXIST: " + photoFilePath);
-
-        }
+//        if (!imageFile.exists()) {
+//            Log.d("ImageViewBoxSelectAct", "DOES NOT EXIST: " + photoFilePath);
+//
+//        }
 //        BitmapFactory.Options options = new BitmapFactory.Options();
 //        options.inSampleSize = 16;
         sourceImage = BitmapFactory.decodeFile(imageFile.getAbsolutePath());
@@ -247,8 +247,8 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
         viewWidth = imageView.getMeasuredWidth(); // this is the image width
         viewHeight = imageView.getMeasuredHeight(); // this is the image height
 
-        Log.d(TAG, "viewWidth: " + viewWidth);
-        Log.d(TAG, "viewHeight: " + viewHeight);
+//        Log.d(TAG, "viewWidth: " + viewWidth);
+//        Log.d(TAG, "viewHeight: " + viewHeight);
 
 
         addBox(photoFilePath);
@@ -281,7 +281,7 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
         sendToResultsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d(TAG, "button pressed");
+//                Log.d(TAG, "button pressed");
                 imageViewScaleFactor = box.getHeight() / box.getWidth() >
                         viewHeight / viewWidth ?
                         (float) viewWidth / box.getWidth() :
@@ -290,9 +290,9 @@ public class ImageViewBoxSelectActivity extends AppCompatActivity {
                 // to the user-enclosed box.
                 resultsPageIntent.putExtra(M_Y_SCALE_FACTOR, box.mRectArea *
                         imageViewScaleFactor * imageViewScaleFactor);
-                Log.d(TAG, "" + box.mRectArea);
-                Log.d(TAG, "" + box.mRectArea *
-                        imageViewScaleFactor * imageViewScaleFactor);
+//                Log.d(TAG, "" + box.mRectArea);
+//                Log.d(TAG, "" + box.mRectArea *
+//                        imageViewScaleFactor * imageViewScaleFactor);
                 startActivity(resultsPageIntent);
             }
         });

@@ -1,4 +1,4 @@
-package com.example.myfirstapp;
+package com.sabeti.shine_reader;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -23,12 +23,10 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
-import java.util.Random;
 
-import static com.example.myfirstapp.MainActivity.RESULTS_DIRECTORY;
+import static com.sabeti.shine_reader.MainActivity.RESULTS_DIRECTORY;
 
 public class ViewPreviousTestsActivity extends AppCompatActivity {
 
@@ -91,7 +89,8 @@ public class ViewPreviousTestsActivity extends AppCompatActivity {
                                 .parse(Uri.parse(stripResultDirectories[i].toString()).
                                         getLastPathSegment().substring(4)));
             } catch (Exception e) {
-                Log.e(TAG, "exception", e);
+//                Log.e(TAG, "exception", e);
+                picDate = "Failed";
             }
 
             // Find results file and image file:
@@ -111,9 +110,9 @@ public class ViewPreviousTestsActivity extends AppCompatActivity {
                     image_file_nonFinal = subfolder_files[j];
                     sample_name = fileName.substring(4, fileName.length() - 4);
                 } else if (fileName.charAt(fileName.length() - 1) == 't') { // results in *.txt stripResultDirectories
-                    Log.d(TAG, ""+ j);
+//                    Log.d(TAG, ""+ j);
                     resultsFilePath = subfolder_files[j].getAbsolutePath();
-                    Log.d(TAG, resultsFilePath);
+//                    Log.d(TAG, resultsFilePath);
 //                    sample_name = fileName.substring(0, resultsFilePath.length() - 4);
                 }
             }
@@ -146,7 +145,7 @@ public class ViewPreviousTestsActivity extends AppCompatActivity {
 //                    Log.d(TAG, result);
 
                 } catch (Exception e) {
-                    Log.e(TAG, "exception", e);
+//                    Log.e(TAG, "exception", e);
                 }
             }
 
@@ -205,20 +204,23 @@ public class ViewPreviousTestsActivity extends AppCompatActivity {
                             File[] files_in_folder = results_folder.listFiles();
                             for (int j = 0; j < files_in_folder.length; j++) {
                                 if (files_in_folder[j].delete()) {
-                                    Log.v("ViewPreviousTestsAct", "file Deleted :" +
-                                            files_in_folder[j].toString());
+//                                    Log.v("ViewPreviousTestsAct", "file Deleted :" +
+//                                            files_in_folder[j].toString());
+                                    continue;
                                 } else {
-                                    Log.v("ViewPreviousTestsAct", "file not Deleted :" +
-                                            files_in_folder[j].toString());
+//                                    Log.v("ViewPreviousTestsAct", "file not Deleted :" +
+//                                            files_in_folder[j].toString());
+                                    continue;
                                 }
                             }
-                            if (results_folder.delete()) {
-                                Log.v("ViewPreviousTestsAct", "folder Deleted :" +
-                                        results_folder.toString());
-                            } else {
-                                Log.v("ViewPreviousTestsAct", "folder not Deleted :" +
-                                        results_folder.toString());
-                            }
+                            results_folder.delete();
+//                            if (results_folder.delete()) {
+//                                Log.v("ViewPreviousTestsAct", "folder Deleted :" +
+//                                        results_folder.toString());
+//                            } else {
+//                                Log.v("ViewPreviousTestsAct", "folder not Deleted :" +
+//                                        results_folder.toString());
+//                            }
                             dialog.dismiss();
                         }
                     });
